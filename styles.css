@@ -1,0 +1,27 @@
+/* Make the logo image bigger */
+.navbar-logo {
+  max-height: 50px;
+  padding-right: 10px;
+}
+
+/* Make navbar white with a grey line along the bottom */
+.navbar,
+.navbar.navbar-expand-lg {
+  background-color: #ffffff !important;
+}
+.navbar {
+  border-bottom: 2px solid #cccccc;
+}
+
+/* Make sidebar HDR UK theme */
+.sidebar {
+  background-color: #29235c !important;
+}
+.sidebar a,
+.sidebar .sidebar-item-text {
+  color: #ffffff;
+}
+.sidebar a:hover,
+.sidebar .sidebar-item-text:hover {
+  color: #e0e0ff;
+}

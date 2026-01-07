@@ -1,0 +1,18 @@
+project:
+  type: website
+
+website:
+  title: "Testing Course Materials"
+  favicon: images/futures.png
+  navbar:
+    logo: images/hdruk_futures.png
+    logo-alt: HDR UK Futures
+  sidebar:
+    contents:
+      - pages/introduction.qmd
+
+format:
+  html:
+    page-layout: full
+    theme: cosmo
+    css: styles.css
