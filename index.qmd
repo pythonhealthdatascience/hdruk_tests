@@ -1,4 +1,83 @@
-<!--
-Python and R... 
-Who we are...
--->
+## About this course
+
+Testing is an essential part of reproducible and reliable research. This practical course explains how to write and run tests, covering key ideas such as unit and integration testing, test coverage, and automated testing with GitHub Actions. Using hands-on examples in Python and R, you’ll learn how to build tests and include them in your research workflow.
+
+## Instructors
+
+```{=html}
+<!-- Linking FontAwesome for fa-github and fa-orcid icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+```
+
+::::: {.card .border-0}
+
+:::: {.columns .d-flex .align-items-center}
+
+::: {.column width="20%"}
+<img src="images/amy.jpg" alt="Amy"
+     style="border-radius: 50%; max-width: 100%; height: auto;">
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="75%"}
+**Amy Heather**
+
+*Postdoctoral Research Associate at the University of Exeter*
+
+<a href="https://orcid.org/0000-0002-6596-3479" class="message-button" target="_blank">
+    <i class="fa-brands fa-orcid"></i> ORCID
+</a>
+<a href="https://github.com/amyheather" class="message-button" target="_blank">
+    <i class="fa-brands fa-github"></i> GitHub
+</a>
+<a href="https://www.linkedin.com/in/amyheather/" class="message-button" target="_blank">
+    <i class="fa-brands fa-linkedin"></i> LinkedIn
+</a>
+
+:::
+
+::::
+
+:::::
+
+::::: {.card .border-0}
+
+:::: {.columns .d-flex .align-items-center}
+
+::: {.column width="20%"}
+<img src="images/tom.jpg" alt="Tom"
+     style="border-radius: 50%; max-width: 100%; height: auto;">
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="75%"}
+**Tom Monks**
+
+*Associate Professor of Health Data Science at the University of Exeter*
+
+<a href="http://orcid.org/0000-0003-2631-4481" class="message-button" target="_blank">
+    <i class="fa-brands fa-orcid"></i> ORCID
+</a>
+<a href="https://github.com/TomMonks" class="message-button" target="_blank">
+    <i class="fa-brands fa-github"></i> GitHub
+</a>
+<a href="https://www.linkedin.com/in/thomas-monks-a24aa22/" class="message-button" target="_blank">
+    <i class="fa-brands fa-linkedin"></i> LinkedIn
+</a>
+
+:::
+
+::::
+
+:::::
+
+## Funding
+
+This course was developed as part of the [STARS project](https://pythonhealthdatascience.github.io/stars/). STARS is supported by the Medical Research Council [grant number MR/Z503915/1].
+
+<a href="https://pythonhealthdatascience.github.io/stars/" target="_blank">
+![](images/stars_reproduce_reuse_banner_blue.png)</a>

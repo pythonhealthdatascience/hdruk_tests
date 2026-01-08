@@ -8,3 +8,25 @@
 .navbar {
   border-bottom: 2px solid #cccccc;
 }
+
+.message-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 130px;
+  margin-top: 10px;
+  padding: 10px 35px;
+  color: rgba(252, 252, 249, 1);
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  background: #29235c;
+  border: 1px solid transparent;
+  transition: 0.2s ease;
+  text-decoration: none;
+}
+.message-button:hover {
+  background: #7498c0;
+  border: 1px solid rgba(0, 0, 0, 1);
+  color: rgba(0, 0, 0, 1);
+}
