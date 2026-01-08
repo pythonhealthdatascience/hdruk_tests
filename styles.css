@@ -9,6 +9,7 @@
   border-bottom: 2px solid #cccccc;
 }
 
+/* LinkedIn/GitHub/ORCID buttons */
 .message-button {
   display: inline-flex;
   align-items: center;
@@ -29,4 +30,11 @@
   background: #7498c0;
   border: 1px solid rgba(0, 0, 0, 1);
   color: rgba(0, 0, 0, 1);
+}
+
+/* Pale grey box for text */
+.box-grey {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 1em 1em 0.2em 1em;
 }
