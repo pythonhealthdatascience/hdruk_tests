@@ -2,6 +2,12 @@
 title: "How to write a basic test"
 ---
 
+```{r}
+#| include: false
+library(reticulate)
+use_condaenv("hdruk_tests", required = TRUE)
+```
+
 <br>
 
 Automated tests check that code behaves as expected by running small, focused checks called tests. Each test sets up some values, runs code, and then uses an assertion or expectation to confirm the result.
@@ -16,7 +22,7 @@ Test are typically stored in a `tests/` folder in files whose names start with `
 
 Here's an example of a simple test:
 
-```{.python}
+```{python}
 import pytest
 
 
@@ -38,12 +44,12 @@ Tests are stored in `tests/testthat/` in files starting with `test_`. These are 
 
 Here's an example of a simple test:
 
-```{.r}
+```{r}
 #| output: false
 library(testthat)
 ```
 
-```{.r}
+```{r}
 test_that("Confirm that the number is positive", {
   number <- 5L
   expect_gt(number, 0L)
