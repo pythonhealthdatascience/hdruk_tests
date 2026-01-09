@@ -40,30 +40,63 @@
     ]
   },
   {
+    "objectID": "pages/write_basic_test.html",
+    "href": "pages/write_basic_test.html",
+    "title": "How to write a basic test",
+    "section": "",
+    "text": "Automated tests check that code behaves as expected by running small, focused checks called tests. Each test sets up some values, runs code, and then uses an assertion or expectation to confirm the result.",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#python",
+    "href": "pages/write_basic_test.html#python",
+    "title": "How to write a basic test",
+    "section": "Python",
+    "text": "Python\nA popular framework for testing in python is pytest.\nIn pytest, each test is a function containing an assert statement to check a condition. If an assertion fails, pytest will return an error message explaining what went wrong.\nTest are typically stored in a tests/ folder in files whose names start with test_. These are automatically discovered and run by pytest.\nHere’s an example of a simple test:\n\nimport pytest\n\n\ndef test_positive():\n    \"\"\"\n    Confirm that the number is positive.\n    \"\"\"\n    number = 5\n    assert number &gt; 0, \"The number should be positive\"",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#r",
+    "href": "pages/write_basic_test.html#r",
+    "title": "How to write a basic test",
+    "section": "R",
+    "text": "R\nA popular framework for testing in R is testthat.\nTests are created with test_that() and built around expectations like expect_true(), expect_false(), expect_equal(), expect_error(), and others (see package index for more).\nTests are stored in tests/testthat/ in files starting with test_. These are automatically discovered and run by testthat.\nHere’s an example of a simple test:\n\nlibrary(testthat)\n\n\ntest_that(\"Confirm that the number is positive\", {\n  number &lt;- 5L\n  expect_gt(number, 0L)\n})\n\nTest passed with 1 success 🥳.",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Testing Course Materials",
+    "title": "Testing in Research Workflows",
     "section": "",
     "text": "Testing is an essential part of reproducible and reliable research. This practical course explains how to write and run tests, covering key ideas such as unit and integration testing, test coverage, and automated testing with GitHub Actions. Using hands-on examples in Python and R, you’ll learn how to build tests and include them in your research workflow."
   },
   {
     "objectID": "index.html#about-this-course",
     "href": "index.html#about-this-course",
-    "title": "Testing Course Materials",
+    "title": "Testing in Research Workflows",
     "section": "",
     "text": "Testing is an essential part of reproducible and reliable research. This practical course explains how to write and run tests, covering key ideas such as unit and integration testing, test coverage, and automated testing with GitHub Actions. Using hands-on examples in Python and R, you’ll learn how to build tests and include them in your research workflow."
   },
   {
     "objectID": "index.html#instructors",
     "href": "index.html#instructors",
-    "title": "Testing Course Materials",
+    "title": "Testing in Research Workflows",
     "section": "Instructors",
     "text": "Instructors\n\n\n\n\n\n\n\n\n\nAmy Heather\nPostdoctoral Research Associate at the University of Exeter\n  ORCID    GitHub    LinkedIn \n\n\n\n\n\n\n\n\n\n\nTom Monks\nAssociate Professor of Health Data Science at the University of Exeter\n  ORCID    GitHub    LinkedIn"
   },
   {
     "objectID": "index.html#funding",
     "href": "index.html#funding",
-    "title": "Testing Course Materials",
+    "title": "Testing in Research Workflows",
     "section": "Funding",
     "text": "Funding\nThis course was developed as part of the STARS project. STARS is supported by the Medical Research Council [grant number MR/Z503915/1]."
   }
