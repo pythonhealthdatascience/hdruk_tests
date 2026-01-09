@@ -18,8 +18,6 @@ A popular framework for testing in python is **pytest**.
 
 In pytest, each test is a function containing an `assert` statement to check a condition. If an assertion fails, pytest will return an error message explaining what went wrong.
 
-Test are typically stored in a `tests/` folder in files whose names start with `test_`. These are automatically discovered and run by pytest.
-
 Here's an example of a simple test:
 
 ```{python}
@@ -39,8 +37,6 @@ def test_positive():
 A popular framework for testing in R is **testthat**.
 
 Tests are created with `test_that()` and built around expectations like `expect_true()`, `expect_false()`, `expect_equal()`, `expect_error()`, and others (see [package index](https://testthat.r-lib.org/reference/index.html) for more).
-
-Tests are stored in `tests/testthat/` in files starting with `test_`. These are automatically discovered and run by testthat.
 
 Here's an example of a simple test:
 
