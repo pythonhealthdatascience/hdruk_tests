@@ -1,0 +1,1 @@
+Running `pytest` when code is structured as a package.
