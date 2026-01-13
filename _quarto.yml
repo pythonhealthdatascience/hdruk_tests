@@ -34,5 +34,8 @@ website:
 format:
   html:
     page-layout: full
-    theme: [cosmo, styles.scss]
-    css: styles.css
+    theme: [cosmo, assets/styles.scss]
+    css:
+      - assets/styles.css
+      - assets/language-selector.css
+    include-after-body: assets/language-selector.js
