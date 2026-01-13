@@ -8,6 +8,8 @@ library(reticulate)
 use_condaenv("hdruk_tests", required = TRUE)
 ```
 
+{{< include /assets/language-selector.html >}}
+
 <br>
 
 The approach to running tests depends on your project structure and workflow. This guide covers the main scenarios you'll encounter.
