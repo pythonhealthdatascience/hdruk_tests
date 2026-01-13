@@ -1,5 +1,214 @@
 [
   {
+    "objectID": "pages/parametrising_tests.html",
+    "href": "pages/parametrising_tests.html",
+    "title": "Parameterising tests",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "Parameterising tests"
+    ]
+  },
+  {
+    "objectID": "pages/unit_tests.html",
+    "href": "pages/unit_tests.html",
+    "title": "Unit tests",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R",
+    "crumbs": [
+      "Types of test",
+      "Unit tests"
+    ]
+  },
+  {
+    "objectID": "pages/case_study.html",
+    "href": "pages/case_study.html",
+    "title": "Case study",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R\nOur tutorial uses a simple example of importing a small patient dataset and carrying out basic descriptive analysis.\nIn the example we will:",
+    "crumbs": [
+      "Case study"
+    ]
+  },
+  {
+    "objectID": "pages/case_study.html#packages",
+    "href": "pages/case_study.html#packages",
+    "title": "Case study",
+    "section": "Packages",
+    "text": "Packages\n\n\nimport json\nfrom pathlib import Path\n\nimport numpy as np\nimport pandas as pd\nimport scipy.stats as st\n\npd.set_option(\"display.max_columns\", 8)",
+    "crumbs": [
+      "Case study"
+    ]
+  },
+  {
+    "objectID": "pages/case_study.html#import-patient-data",
+    "href": "pages/case_study.html#import-patient-data",
+    "title": "Case study",
+    "section": "Import patient data",
+    "text": "Import patient data\nOur dataset is a small synthetic set of patient-level event times that could come from a healthcare setting (e.g., emergency department, outpatient clinic, doctor’s appointments). Each row records when a patient arrived and when service began.\n\nOur function import_patient_data() reads the data from a CSV file and checks it contains the expected columns, returning a pandas DataFrame.\n\ndef import_patient_data(path):\n    \"\"\"\n    Import raw patient data and check that required columns are present.\n\n    Parameters\n    ----------\n    path : str or pathlib.Path\n        Path to the CSV file containing the patient data.\n\n    Returns\n    -------\n    pandas.DataFrame\n        Dataframe containing the raw patient-level data.\n\n    Raises\n    ------\n    ValueError\n        If the CSV file does not contain exactly the expected columns\n        in the expected order.\n    \"\"\"\n    df = pd.read_csv(Path(path))\n\n    # Expected columns in the raw data (names and order must match)\n    expected = [\n        \"PATIENT_ID\",\n        \"ARRIVAL_DATE\", \"ARRIVAL_TIME\",\n        \"SERVICE_DATE\", \"SERVICE_TIME\"\n    ]\n    if list(df.columns) != expected:\n        raise ValueError(\n            f\"Unexpected columns: {list(df.columns)} (expected {expected})\"\n        )\n\n    return df\n\n\n\n\n\nWe can run this function on our example dataset patient_data.csv.\nYou can download a copy of this data here:\n Download the example patient-level data \n\n\nraw_data = import_patient_data(\"data/patient_data.csv\")\nraw_data\n\n   PATIENT_ID ARRIVAL_DATE  ARRIVAL_TIME SERVICE_DATE  SERVICE_TIME\n0           1   2025-01-01             1   2025-01-01             7\n1           2   2025-01-01             2   2025-01-01             4\n2           3   2025-01-01             3   2025-01-01            10\n3           4   2025-01-01             7   2025-01-01            14\n4           5   2025-01-01            10   2025-01-01            12\n5           6   2025-01-01            10   2025-01-01            11",
+    "crumbs": [
+      "Case study"
+    ]
+  },
+  {
+    "objectID": "pages/case_study.html#calculate-waiting-times",
+    "href": "pages/case_study.html#calculate-waiting-times",
+    "title": "Case study",
+    "section": "Calculate waiting times",
+    "text": "Calculate waiting times\n\nNext, we convert the date and time fields into datetime columns and calculate each patient’s waiting time in minutes.\n\ndef calculate_wait_times(df):\n    \"\"\"\n    Add arrival/service datetimes and waiting time in minutes.\n\n    Parameters\n    ----------\n    df : pandas.DataFrame\n        Patient-level data containing `ARRIVAL_DATE`, `ARRIVAL_TIME`,\n        `SERVICE_DATE`, and `SERVICE_TIME` columns.\n\n    Returns\n    -------\n    pandas.DataFrame\n        Copy of the input DataFrame with additional columns:\n        `arrival_datetime`, `service_datetime`, and `wait_minutes`.\n    \"\"\"\n    df = df.copy()\n\n    # Combine date and time columns into datetime columns\n    for prefix in (\"ARRIVAL\", \"SERVICE\"):\n        df[f\"{prefix.lower()}_datetime\"] = pd.to_datetime(\n            df[f\"{prefix}_DATE\"].astype(str) +\n            \" \" +\n            df[f\"{prefix}_TIME\"].astype(str).str.zfill(4),\n            format=\"%Y-%m-%d %H%M\",\n        )\n\n    # Waiting time in minutes\n    df[\"wait_minutes\"] = (\n        df[\"service_datetime\"] - df[\"arrival_datetime\"]\n    ) / pd.Timedelta(minutes=1)\n\n    return df\n\n\n\n\n\nWe then apply this function to the raw data.\n\n\nprocessed_data = calculate_wait_times(raw_data)\nprocessed_data\n\n   PATIENT_ID ARRIVAL_DATE  ARRIVAL_TIME SERVICE_DATE  SERVICE_TIME  \\\n0           1   2025-01-01             1   2025-01-01             7   \n1           2   2025-01-01             2   2025-01-01             4   \n2           3   2025-01-01             3   2025-01-01            10   \n3           4   2025-01-01             7   2025-01-01            14   \n4           5   2025-01-01            10   2025-01-01            12   \n5           6   2025-01-01            10   2025-01-01            11   \n\n     arrival_datetime    service_datetime  wait_minutes  \n0 2025-01-01 00:01:00 2025-01-01 00:07:00           6.0  \n1 2025-01-01 00:02:00 2025-01-01 00:04:00           2.0  \n2 2025-01-01 00:03:00 2025-01-01 00:10:00           7.0  \n3 2025-01-01 00:07:00 2025-01-01 00:14:00           7.0  \n4 2025-01-01 00:10:00 2025-01-01 00:12:00           2.0  \n5 2025-01-01 00:10:00 2025-01-01 00:11:00           1.0",
+    "crumbs": [
+      "Case study"
+    ]
+  },
+  {
+    "objectID": "pages/case_study.html#calculate-summary-statistics",
+    "href": "pages/case_study.html#calculate-summary-statistics",
+    "title": "Case study",
+    "section": "Calculate summary statistics",
+    "text": "Calculate summary statistics\nFinally, we define a small utility function that calculates the mean, standard deviation, and a 95% confidence interval for a numeric series. The function handles small‑sample edge cases explicitly and uses the t‑distribution, which is appropriate when the sample size is modest.\n\n\ndef summary_stats(data):\n    \"\"\"\n    Calculate mean, standard deviation and 95% confidence interval (CI).\n\n    CI is calculated using the t-distribution, which is appropriate for\n    small samples and converges to the normal distribution as the sample\n    size increases.\n\n    Parameters\n    ----------\n    data : pandas.Series\n        Data to use in the calculation.\n\n    Returns\n    -------\n    dict[str, float]\n        A dictionary with keys `mean`, `std_dev`, `ci_lower` and `ci_upper`.\n        Each value is a float, or `numpy.nan` if it can't be computed.\n    \"\"\"\n    # Drop missing values\n    data = data.dropna()\n\n    # Find number of observations\n    count = len(data)\n\n    # If there are no observations, then set all to NaN\n    if count == 0:\n        mean, std_dev, ci_lower, ci_upper = np.nan, np.nan, np.nan, np.nan\n\n    # If there are 1 or 2 observations, can do mean but not other statistics\n    elif count &lt; 3:\n        mean = data.mean()\n        std_dev, ci_lower, ci_upper = np.nan, np.nan, np.nan\n\n    # With more than two observations, can calculate all...\n    else:\n        mean = data.mean()\n        std_dev = data.std()\n\n        # If there is no variation, then CI is equal to the mean\n        if np.var(data) == 0:\n            ci_lower, ci_upper = mean, mean\n        else:\n            # 95% CI based on the t-distribution\n            ci_lower, ci_upper = st.t.interval(\n                confidence=0.95,\n                df=count-1,\n                loc=mean,\n                scale=st.sem(data)\n            )\n\n    return {\n        \"mean\": mean,\n        \"std_dev\": std_dev,\n        \"ci_lower\": ci_lower,\n        \"ci_upper\": ci_upper\n    }\n\n\n\n\n\nWe apply summary_stats() to the waiting times.\n\n\nresults = summary_stats(processed_data[\"wait_minutes\"])\n\n# Format dictionary for display\nformatted_results = json.dumps(results, indent=4)\nprint(formatted_results)\n\n{\n    \"mean\": 4.166666666666667,\n    \"std_dev\": 2.786873995477131,\n    \"ci_lower\": 1.2420217719136457,\n    \"ci_upper\": 7.091311561419689\n}",
+    "crumbs": [
+      "Case study"
+    ]
+  },
+  {
+    "objectID": "pages/back_tests.html",
+    "href": "pages/back_tests.html",
+    "title": "Back tests",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R",
+    "crumbs": [
+      "Types of test",
+      "Back tests"
+    ]
+  },
+  {
+    "objectID": "pages/test_coverage.html",
+    "href": "pages/test_coverage.html",
+    "title": "Test coverage",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R",
+    "crumbs": [
+      "Test coverage"
+    ]
+  },
+  {
+    "objectID": "pages/functional_tests.html",
+    "href": "pages/functional_tests.html",
+    "title": "Functional tests",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R",
+    "crumbs": [
+      "Types of test",
+      "Functional tests"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Testing in Research Workflows",
+    "section": "",
+    "text": "Testing is an essential part of reproducible and reliable research. This practical course explains how to write and run tests, covering key ideas such as unit and integration testing, test coverage, and automated testing with GitHub Actions. Using hands-on examples in Python and R, you’ll learn how to build tests and include them in your research workflow."
+  },
+  {
+    "objectID": "index.html#about-this-course",
+    "href": "index.html#about-this-course",
+    "title": "Testing in Research Workflows",
+    "section": "",
+    "text": "Testing is an essential part of reproducible and reliable research. This practical course explains how to write and run tests, covering key ideas such as unit and integration testing, test coverage, and automated testing with GitHub Actions. Using hands-on examples in Python and R, you’ll learn how to build tests and include them in your research workflow."
+  },
+  {
+    "objectID": "index.html#instructors",
+    "href": "index.html#instructors",
+    "title": "Testing in Research Workflows",
+    "section": "Instructors",
+    "text": "Instructors\n\n\n\n\n\n\n\n\n\nAmy Heather\nPostdoctoral Research Associate at the University of Exeter\n  ORCID    GitHub    LinkedIn \n\n\n\n\n\n\n\n\n\n\nTom Monks\nAssociate Professor of Health Data Science at the University of Exeter\n  ORCID    GitHub    LinkedIn"
+  },
+  {
+    "objectID": "index.html#funding",
+    "href": "index.html#funding",
+    "title": "Testing in Research Workflows",
+    "section": "Funding",
+    "text": "Funding\nThis course was developed as part of the STARS project. STARS is supported by the Medical Research Council [grant number MR/Z503915/1]."
+  },
+  {
+    "objectID": "pages/write_basic_test.html",
+    "href": "pages/write_basic_test.html",
+    "title": "How to write a basic test",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#what-is-pytest",
+    "href": "pages/write_basic_test.html#what-is-pytest",
+    "title": "How to write a basic test",
+    "section": "What is pytest?",
+    "text": "What is pytest?\nPytest is a popular framework for testing in Python, widely used in software development and data science.\nYou should install the pytest package into your environment from either conda or PyPI:\nconda install pytest\n# or\npip install pytest",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#what-a-pytest-test-looks-like",
+    "href": "pages/write_basic_test.html#what-a-pytest-test-looks-like",
+    "title": "How to write a basic test",
+    "section": "What a pytest test looks like",
+    "text": "What a pytest test looks like\nIn pytest, any function whose name starts with test_ is treated as a test. Inside the function you write one or more assert statements. If an assertion fails, pytest will return an error message explaining what went wrong.\n\nimport pytest\n\n\ndef test_example():\n    result = 2 + 2\n    assert result == 4",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#testthat",
+    "href": "pages/write_basic_test.html#testthat",
+    "title": "How to write a basic test",
+    "section": "testthat",
+    "text": "testthat\ntestthat is a popular framework for testing in R, widely used in software development and data science.\nYou should install the testthat package into your environment from CRAN.\ninstall.packages(\"testthat\")",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#what-a-testthat-test-looks-like",
+    "href": "pages/write_basic_test.html#what-a-testthat-test-looks-like",
+    "title": "How to write a basic test",
+    "section": "What a testthat test looks like",
+    "text": "What a testthat test looks like\nTests are created using test_that(). They are built around expectations like expect_true(), expect_false(), expect_equal(), expect_error(), and others (see package index for more).",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#simple-test-example",
+    "href": "pages/write_basic_test.html#simple-test-example",
+    "title": "How to write a basic test",
+    "section": "Simple test example",
+    "text": "Simple test example\n\nlibrary(testthat)\n\n\ntest_that(\"2 add 2 equals 4\", {\n  result &lt;- 2L + 2L\n  expect_equal(result, 4L)\n})\n\nTest passed with 1 success 😸.",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#a-simple-test-for-summary_stats",
+    "href": "pages/write_basic_test.html#a-simple-test-for-summary_stats",
+    "title": "How to write a basic test",
+    "section": "A simple test for summary_stats",
+    "text": "A simple test for summary_stats\nHere is a minimal example using the summary_stats function from the case study. For a single value, the function should return that value as the mean and NaN for the other statistics, because there is not enough data to define a standard deviation or confidence interval.\n\n\nimport pandas as pd\nimport pytest\n\n\ndef test_summary_stats_single_value():\n    \"\"\"Running summary_stats on a single value should only return mean.\"\"\"\n    data = pd.Series([10])\n    mean, std, ci_lower, ci_upper = summary_stats(data)\n    assert mean == 10\n    assert pd.isna(std)\n    assert pd.isna(ci_lower)\n    assert pd.isna(ci_upper)\n\n\n\n\n#",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
     "objectID": "pages/why_test.html",
     "href": "pages/why_test.html",
     "title": "When and why to run tests?",
@@ -40,64 +249,57 @@
     ]
   },
   {
-    "objectID": "pages/write_basic_test.html",
-    "href": "pages/write_basic_test.html",
-    "title": "How to write a basic test",
+    "objectID": "pages/run_tests.html",
+    "href": "pages/run_tests.html",
+    "title": "How to run tests",
     "section": "",
-    "text": "Automated tests check that code behaves as expected by running small, focused checks called tests. Each test sets up some values, runs code, and then uses an assertion or expectation to confirm the result.",
+    "text": "Choose your language:  \n    Python\n    R\nThe approach to running tests depends on your project structure and workflow. This guide covers the main scenarios you’ll encounter.",
     "crumbs": [
       "Introduction to writing and running tests",
-      "How to write a basic test"
+      "How to run tests"
     ]
   },
   {
-    "objectID": "pages/write_basic_test.html#python",
-    "href": "pages/write_basic_test.html#python",
-    "title": "How to write a basic test",
-    "section": "Python",
-    "text": "Python\nA popular framework for testing in python is pytest.\nIn pytest, each test is a function containing an assert statement to check a condition. If an assertion fails, pytest will return an error message explaining what went wrong.\nTest are typically stored in a tests/ folder in files whose names start with test_. These are automatically discovered and run by pytest.\nHere’s an example of a simple test:\n\nimport pytest\n\n\ndef test_positive():\n    \"\"\"\n    Confirm that the number is positive.\n    \"\"\"\n    number = 5\n    assert number &gt; 0, \"The number should be positive\"",
+    "objectID": "pages/run_tests.html#running-tests-when-code-is-structured-as-a-package",
+    "href": "pages/run_tests.html#running-tests-when-code-is-structured-as-a-package",
+    "title": "How to run tests",
+    "section": "Running tests when code is structured as a package",
+    "text": "Running tests when code is structured as a package\nYou can structure your research code as a package. We recommend this approach as…\nWhen the code you are testing is in a package, easy… follow a standardised structure… detected by test tools….\n\nPython\nTests are stored in a tests/ folder in files whose names start with test_. These are automatically discovered and run by pytest. For example:\nresearch_project/\n├── pyproject.toml\n├── README.md\n├── src/\n│   └── my_package/\n│       ├── __init__.py\n│       ├── analysis.py\n│       └── utils.py\n└── tests/\n    ├── __init__.py\n    ├── test_analysis.py\n    └── test_utils.py\nTests are typically run from the terminal / powershell / command prompt (depends on OS) using the following commands…\n# Run all tests in the current directory and subdirectories\npytest\n\n# Run all tests in the tests/ directory\npytest tests/\n\n# Run tests from a specific file\npytest tests/test_filename.py\n\n# Run a specific test function\npytest tests/test_filename.py::test_function_name\nWhen you run a test, you’ll see an output like this in the terminal:\n\n\n\n\n\n\nNoteTest output:\n\n\n\n\n\n============================= test session starts ==============================\nplatform linux -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0\nrootdir: /__w/hdruk_tests/hdruk_tests/pages\ncollected 0 items\n\n============================ no tests ran in 0.00s =============================\nERROR: file or directory not found: TODO.py\n\n&lt;ExitCode.USAGE_ERROR: 4&gt;\n\n\n\n\n\n\nR\nTests are stored in tests/testthat/ in files starting with test_. These are automatically discovered and run by testthat. For example:\nresearch_project/\n├── DESCRIPTION\n├── NAMESPACE\n├── README.md\n├── R/\n│   ├── analysis.R\n│   └── utils.R\n└── tests/\n    └── testthat/\n        ├── test-analysis.R\n        └── test-utils.R\nTests are typically run from the R console using the following commands…\n# Run all tests in a package\ndevtools::test()\n\n# Run all tests in the current directory and subdirectories\ntestthat::test_dir()\n\n# Run tests from a specific file\ntestthat:test_file(\"tests/testthat/test-filename.R\")\nWhen tests run, you’ll see console output indicating the number of tests passed, failed, or skipped, with details about any failures.",
     "crumbs": [
       "Introduction to writing and running tests",
-      "How to write a basic test"
+      "How to run tests"
     ]
   },
   {
-    "objectID": "pages/write_basic_test.html#r",
-    "href": "pages/write_basic_test.html#r",
-    "title": "How to write a basic test",
-    "section": "R",
-    "text": "R\nA popular framework for testing in R is testthat.\nTests are created with test_that() and built around expectations like expect_true(), expect_false(), expect_equal(), expect_error(), and others (see package index for more).\nTests are stored in tests/testthat/ in files starting with test_. These are automatically discovered and run by testthat.\nHere’s an example of a simple test:\n\nlibrary(testthat)\n\n\ntest_that(\"Confirm that the number is positive\", {\n  number &lt;- 5L\n  expect_gt(number, 0L)\n})\n\nTest passed with 1 success 🥳.",
+    "objectID": "pages/run_tests.html#running-tests-when-code-is-in-separate-files-but-not-a-package",
+    "href": "pages/run_tests.html#running-tests-when-code-is-in-separate-files-but-not-a-package",
+    "title": "How to run tests",
+    "section": "Running tests when code is in separate files but not a package",
+    "text": "Running tests when code is in separate files but not a package\nWhen the code you want to test exists in .py or .R files but isn’t structured as a package, you can still run tests from the terminal or console, just with some adjustments.\n\nPython\nYou should still store your tests in a tests/ directory in filenames starting with test_. For example:\nproject/\n├── my_code.py\n└── tests/\n    └── test_my_code.py\nto run test…\n\n# TODO\n\nif code is in jupyter notebook, you can use testbook.\n# Install: pip install testbook\nfrom testbook import testbook\n\n@testbook('my_notebook.ipynb', execute=True)\ndef test_notebook_function(tb):\n    func = tb.ref(\"add\")\n    assert func(2, 3) == 5\n\n\nR\nproject/\n├── my_code.R\n└── tests/\n    └── testthat/\n        ├── test_my_code.R",
     "crumbs": [
       "Introduction to writing and running tests",
-      "How to write a basic test"
+      "How to run tests"
     ]
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Testing in Research Workflows",
+    "objectID": "pages/run_tests.html#tests-in-the-same-file-as-code",
+    "href": "pages/run_tests.html#tests-in-the-same-file-as-code",
+    "title": "How to run tests",
+    "section": "Tests in the same file as code",
+    "text": "Tests in the same file as code\nFor quick scripts or exploratory work, where you haven’t organised code into separate files / modules etc., you may wish to include tests directly in your code file.\nThere are a few options on how you can do this\n\nPython\ndefine tests in script and …\nin a jupyter notebook use ipytest\n# Install: pip install ipytest\nimport ipytest\nipytest.autoconfig()\n\n# In another cell\ndef add(a, b):\n    return a + b\n\n# In a test cell\n%%ipytest\ndef test_add():\n    assert add(2, 3) == 5\n\n\nR\njust write and run them direct in script.\n# Function\nadd &lt;- function(a, b) {\n  a + b\n}\n\n# Inline test\nlibrary(testthat)\ntest_that(\"add works correctly\", {\n  expect_equal(add(2, 3), 5)\n  expect_equal(add(-1, 1), 0)\n})",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to run tests"
+    ]
+  },
+  {
+    "objectID": "pages/github_actions.html",
+    "href": "pages/github_actions.html",
+    "title": "Running tests via GitHub actions",
     "section": "",
-    "text": "Testing is an essential part of reproducible and reliable research. This practical course explains how to write and run tests, covering key ideas such as unit and integration testing, test coverage, and automated testing with GitHub Actions. Using hands-on examples in Python and R, you’ll learn how to build tests and include them in your research workflow."
-  },
-  {
-    "objectID": "index.html#about-this-course",
-    "href": "index.html#about-this-course",
-    "title": "Testing in Research Workflows",
-    "section": "",
-    "text": "Testing is an essential part of reproducible and reliable research. This practical course explains how to write and run tests, covering key ideas such as unit and integration testing, test coverage, and automated testing with GitHub Actions. Using hands-on examples in Python and R, you’ll learn how to build tests and include them in your research workflow."
-  },
-  {
-    "objectID": "index.html#instructors",
-    "href": "index.html#instructors",
-    "title": "Testing in Research Workflows",
-    "section": "Instructors",
-    "text": "Instructors\n\n\n\n\n\n\n\n\n\nAmy Heather\nPostdoctoral Research Associate at the University of Exeter\n  ORCID    GitHub    LinkedIn \n\n\n\n\n\n\n\n\n\n\nTom Monks\nAssociate Professor of Health Data Science at the University of Exeter\n  ORCID    GitHub    LinkedIn"
-  },
-  {
-    "objectID": "index.html#funding",
-    "href": "index.html#funding",
-    "title": "Testing in Research Workflows",
-    "section": "Funding",
-    "text": "Funding\nThis course was developed as part of the STARS project. STARS is supported by the Medical Research Council [grant number MR/Z503915/1]."
+    "text": "Choose your language:  \n    Python\n    R",
+    "crumbs": [
+      "Running tests via GitHub actions"
+    ]
   }
 ]
