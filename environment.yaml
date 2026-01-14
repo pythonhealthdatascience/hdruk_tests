@@ -9,4 +9,4 @@ dependencies:
   - python=3.12.12
   - scipy=1.17.0
   - pip:
-     - -e examples/python/.
+     - -e examples/python_package/.
