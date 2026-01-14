@@ -4,7 +4,29 @@
     "href": "pages/parametrising_tests.html",
     "title": "Parameterising tests",
     "section": "",
-    "text": "Choose your language:  \n    Python\n    R",
+    "text": "Choose your language:  \n    Python\n    R\nThere are many tools you can make use of when testing - one example is parametrising tests.\nWhen you need to test the same logic with different inputs and expected outputs, you can parameterise your tests instead of writing repetitive test functions. This minimises code duplication and makes it easy to add new test cases.",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "Parameterising tests"
+    ]
+  },
+  {
+    "objectID": "pages/parametrising_tests.html#example-testing-summary_stats",
+    "href": "pages/parametrising_tests.html#example-testing-summary_stats",
+    "title": "Parameterising tests",
+    "section": "Example: Testing summary_stats()",
+    "text": "Example: Testing summary_stats()\n\nLet’s say we want to verify that our summary_stats() function works correctly for different datasets. Instead of writing separate test functions for each case, we can use pytest’s @pytest.mark.parametrize decorator:\n\nimport pandas as pd\nimport pytest\n\n\n@pytest.mark.parametrize(\n    \"data, expected_mean, expected_std, expected_ci_lower, expected_ci_upper\",\n    [\n        # Five value sample with known summary statistics\n        ([1.0, 2.0, 3.0, 4.0, 5.0], 3.0, 1.58, 1.04, 4.96),\n        # No variation: CI collapse to mean\n        ([5, 5, 5], 5, 0, 5, 5),\n    ],\n)\ndef test_summary_stats(\n    data, expected_mean, expected_std, expected_ci_lower, expected_ci_upper\n):\n    \"\"\"Running summary_stats returns expected values.\"\"\"\n    mean, std, ci_lower, ci_upper = summary_stats(pd.Series(data))\n    assert mean == pytest.approx(expected_mean, rel=5e-3)\n    assert std == pytest.approx(expected_std, rel=5e-3)\n    assert ci_lower == pytest.approx(expected_ci_lower, rel=5e-3)\n    assert ci_upper == pytest.approx(expected_ci_upper, rel=5e-3)\n\n\nHow it works\nThe @pytest.mark.parametrize decorator takes two arguments:\n\nParameter names (as a string). These variable names will be passed to your test function. For example:\n\n\"data, expected_mean, expected_std, expected_ci_lower, expected_ci_upper\"\n\nTest cases (as a list of tuples). Each tuple contains values for one test case. For example:\n\n[\n    # Five value sample with known summary statistics\n    ([1.0, 2.0, 3.0, 4.0, 5.0], 3.0, 1.58, 1.04, 4.96),\n    # No variation: CI collapse to mean\n    ([5, 5, 5], 5, 0, 5, 5),\n]\nIf any test case fails, pytest will clearly indicate which parameters were used, making debugging straightforward.\n\n\n\nTODO.",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "Parameterising tests"
+    ]
+  },
+  {
+    "objectID": "pages/parametrising_tests.html#how-it-works",
+    "href": "pages/parametrising_tests.html#how-it-works",
+    "title": "Parameterising tests",
+    "section": "How it works",
+    "text": "How it works\nThe @pytest.mark.parametrize decorator takes two arguments:\n\nParameter names (as a string). These variable names will be passed to your test function. For example:\n\n\"data, expected_mean, expected_std, expected_ci_lower, expected_ci_upper\"\n\nTest cases (as a list of tuples). Each tuple contains values for one test case. For example:\n\n[\n    # Five value sample with known summary statistics\n    ([1.0, 2.0, 3.0, 4.0, 5.0], 3.0, 1.58, 1.04, 4.96),\n    # No variation: CI collapse to mean\n    ([5, 5, 5], 5, 0, 5, 5),\n]\nIf any test case fails, pytest will clearly indicate which parameters were used, making debugging straightforward.",
     "crumbs": [
       "Introduction to writing and running tests",
       "Parameterising tests"
@@ -158,7 +180,7 @@
     "href": "pages/write_basic_test.html#what-a-pytest-test-looks-like",
     "title": "How to write a basic test",
     "section": "What a pytest test looks like",
-    "text": "What a pytest test looks like\nIn pytest, any function whose name starts with test_ is treated as a test. Inside the function you write one or more assert statements. If an assertion fails, pytest will return an error message explaining what went wrong.\n\nimport pytest\n\n\ndef test_example():\n    result = 2 + 2\n    assert result == 4",
+    "text": "What a pytest test looks like\nIn pytest, any function whose name starts with test_ is treated as a test. Inside the function you write one or more assert statements. If an assertion fails, pytest will return an error message explaining what went wrong.\n\nimport pytest\n\n\ndef test_example():\n    \"\"\"Simple test confirming 2 + 2 = 4\"\"\"\n    result = 2 + 2\n    assert result == 4",
     "crumbs": [
       "Introduction to writing and running tests",
       "How to write a basic test"
@@ -191,7 +213,7 @@
     "href": "pages/write_basic_test.html#simple-test-example",
     "title": "How to write a basic test",
     "section": "Simple test example",
-    "text": "Simple test example\n\nlibrary(testthat)\n\n\ntest_that(\"2 add 2 equals 4\", {\n  result &lt;- 2L + 2L\n  expect_equal(result, 4L)\n})\n\nTest passed with 1 success 😸.",
+    "text": "Simple test example\n\nlibrary(testthat)\n\n\ntest_that(\"2 add 2 equals 4\", {\n  result &lt;- 2L + 2L\n  expect_equal(result, 4L)\n})\n\nTest passed with 1 success 😀.",
     "crumbs": [
       "Introduction to writing and running tests",
       "How to write a basic test"
@@ -202,7 +224,7 @@
     "href": "pages/write_basic_test.html#a-simple-test-for-summary_stats",
     "title": "How to write a basic test",
     "section": "A simple test for summary_stats",
-    "text": "A simple test for summary_stats\nHere is a minimal example using the summary_stats function from the case study. For a single value, the function should return that value as the mean and NaN for the other statistics, because there is not enough data to define a standard deviation or confidence interval.\n\n\nimport pandas as pd\nimport pytest\n\n\ndef test_summary_stats_single_value():\n    \"\"\"Running summary_stats on a single value should only return mean.\"\"\"\n    data = pd.Series([10])\n    mean, std, ci_lower, ci_upper = summary_stats(data)\n    assert mean == 10\n    assert pd.isna(std)\n    assert pd.isna(ci_lower)\n    assert pd.isna(ci_upper)\n\n\n\n\n#",
+    "text": "A simple test for summary_stats\nHere is a minimal example using the summary_stats function from the case study. For a single value, the function should return that value as the mean and NaN for the other statistics, because there is not enough data to define a standard deviation or confidence interval.\n\n\nimport pandas as pd\nimport pytest\n\n\ndef test_summary_stats_single_value():\n    \"\"\"Running summary_stats on a single value should only return mean.\"\"\"\n    data = pd.Series([10])\n    res = summary_stats(data)\n    assert res[\"mean\"] == 10\n    assert pd.isna(res[\"std_dev\"])\n    assert pd.isna(res[\"ci_lower\"])\n    assert pd.isna(res[\"ci_upper\"])\n\n\n\nTODO.",
     "crumbs": [
       "Introduction to writing and running tests",
       "How to write a basic test"
@@ -253,40 +275,62 @@
     "href": "pages/run_tests.html",
     "title": "How to run tests",
     "section": "",
-    "text": "Choose your language:  \n    Python\n    R\nThe approach to running tests depends on your project structure and workflow. This guide covers the main scenarios you’ll encounter.",
+    "text": "Choose your language:  \n    Python\n    R",
     "crumbs": [
       "Introduction to writing and running tests",
       "How to run tests"
     ]
   },
   {
-    "objectID": "pages/run_tests.html#running-tests-when-code-is-structured-as-a-package",
-    "href": "pages/run_tests.html#running-tests-when-code-is-structured-as-a-package",
+    "objectID": "pages/run_tests.html#required-structure-for-running-tests-from-the-command-line",
+    "href": "pages/run_tests.html#required-structure-for-running-tests-from-the-command-line",
     "title": "How to run tests",
-    "section": "Running tests when code is structured as a package",
-    "text": "Running tests when code is structured as a package\nYou can structure your research code as a package. We recommend this approach as…\nWhen the code you are testing is in a package, easy… follow a standardised structure… detected by test tools….\n\nPython\nTests are stored in a tests/ folder in files whose names start with test_. These are automatically discovered and run by pytest. For example:\nresearch_project/\n├── pyproject.toml\n├── README.md\n├── src/\n│   └── my_package/\n│       ├── __init__.py\n│       ├── analysis.py\n│       └── utils.py\n└── tests/\n    ├── __init__.py\n    ├── test_analysis.py\n    └── test_utils.py\nTests are typically run from the terminal / powershell / command prompt (depends on OS) using the following commands…\n# Run all tests in the current directory and subdirectories\npytest\n\n# Run all tests in the tests/ directory\npytest tests/\n\n# Run tests from a specific file\npytest tests/test_filename.py\n\n# Run a specific test function\npytest tests/test_filename.py::test_function_name\nWhen you run a test, you’ll see an output like this in the terminal:\n\n\n\n\n\n\nNoteTest output:\n\n\n\n\n\n============================= test session starts ==============================\nplatform linux -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0\nrootdir: /__w/hdruk_tests/hdruk_tests/pages\ncollected 0 items\n\n============================ no tests ran in 0.00s =============================\nERROR: file or directory not found: TODO.py\n\n&lt;ExitCode.USAGE_ERROR: 4&gt;\n\n\n\n\n\n\nR\nTests are stored in tests/testthat/ in files starting with test_. These are automatically discovered and run by testthat. For example:\nresearch_project/\n├── DESCRIPTION\n├── NAMESPACE\n├── README.md\n├── R/\n│   ├── analysis.R\n│   └── utils.R\n└── tests/\n    └── testthat/\n        ├── test-analysis.R\n        └── test-utils.R\nTests are typically run from the R console using the following commands…\n# Run all tests in a package\ndevtools::test()\n\n# Run all tests in the current directory and subdirectories\ntestthat::test_dir()\n\n# Run tests from a specific file\ntestthat:test_file(\"tests/testthat/test-filename.R\")\nWhen tests run, you’ll see console output indicating the number of tests passed, failed, or skipped, with details about any failures.",
+    "section": "Required structure for running tests from the command line",
+    "text": "Required structure for running tests from the command line\nThis approach works when you have:\n\n1. Test files that import your analysis code\nYour test files need to import the functions, classes, or modules you want to test. This can be done in several ways depending on your project structure:\n# If your code is packaged\nfrom waitingtimes.patient_analysis import summary_stats\n\n# If your code is in a local file in the same directory\nfrom patient_analysis import summary_stats\n\n# If your code is in a subdirectory\nfrom src.analysis import summary_stats\n\n\n2. Test files that following the test_ naming convention\nPytest automatically discovers and runs tests when your test files start with test_. It is also typical (but not mandatory) to store test files in a folder called tests/. For example:\ntests/\n├── test_back.py\n├── test_functional.py\n└── test_unit.py",
     "crumbs": [
       "Introduction to writing and running tests",
       "How to run tests"
     ]
   },
   {
-    "objectID": "pages/run_tests.html#running-tests-when-code-is-in-separate-files-but-not-a-package",
-    "href": "pages/run_tests.html#running-tests-when-code-is-in-separate-files-but-not-a-package",
+    "objectID": "pages/run_tests.html#common-pytest-commands",
+    "href": "pages/run_tests.html#common-pytest-commands",
     "title": "How to run tests",
-    "section": "Running tests when code is in separate files but not a package",
-    "text": "Running tests when code is in separate files but not a package\nWhen the code you want to test exists in .py or .R files but isn’t structured as a package, you can still run tests from the terminal or console, just with some adjustments.\n\nPython\nYou should still store your tests in a tests/ directory in filenames starting with test_. For example:\nproject/\n├── my_code.py\n└── tests/\n    └── test_my_code.py\nto run test…\n\n# TODO\n\nif code is in jupyter notebook, you can use testbook.\n# Install: pip install testbook\nfrom testbook import testbook\n\n@testbook('my_notebook.ipynb', execute=True)\ndef test_notebook_function(tb):\n    func = tb.ref(\"add\")\n    assert func(2, 3) == 5\n\n\nR\nproject/\n├── my_code.R\n└── tests/\n    └── testthat/\n        ├── test_my_code.R",
+    "section": "Common pytest commands",
+    "text": "Common pytest commands\nOnce your project follows these conventions, you can run tests from a terminal, PowerShell, or command prompt (depending on your OS). Common commands include:\n# Run all tests in the current directory and subdirectories\npytest\n\n# Run all tests in the tests/ directory\npytest tests/\n\n# Run tests from a specific file\npytest tests/test_filename.py\n\n# Run a specific test function\npytest tests/test_filename.py::test_function_name",
     "crumbs": [
       "Introduction to writing and running tests",
       "How to run tests"
     ]
   },
   {
-    "objectID": "pages/run_tests.html#tests-in-the-same-file-as-code",
-    "href": "pages/run_tests.html#tests-in-the-same-file-as-code",
+    "objectID": "pages/run_tests.html#example-package-structure",
+    "href": "pages/run_tests.html#example-package-structure",
     "title": "How to run tests",
-    "section": "Tests in the same file as code",
-    "text": "Tests in the same file as code\nFor quick scripts or exploratory work, where you haven’t organised code into separate files / modules etc., you may wish to include tests directly in your code file.\nThere are a few options on how you can do this\n\nPython\ndefine tests in script and …\nin a jupyter notebook use ipytest\n# Install: pip install ipytest\nimport ipytest\nipytest.autoconfig()\n\n# In another cell\ndef add(a, b):\n    return a + b\n\n# In a test cell\n%%ipytest\ndef test_add():\n    assert add(2, 3) == 5\n\n\nR\njust write and run them direct in script.\n# Function\nadd &lt;- function(a, b) {\n  a + b\n}\n\n# Inline test\nlibrary(testthat)\ntest_that(\"add works correctly\", {\n  expect_equal(add(2, 3), 5)\n  expect_equal(add(-1, 1), 0)\n})",
+    "section": "Example: package structure",
+    "text": "Example: package structure\nWhen your code is structured as a package, your project might look like:\nproject/\n├── data/\n│   └── patient_data.csv\n├── pyproject.toml\n├── README.md\n├── src/\n│   └── waitingtimes/\n│       ├── __init__.py\n│       └── patient_analysis.py\n└── tests/\n    ├── test_intro_simple.py\n    └── ...\nThe video below demonstrates running tests on a package structured this way. In the video we:\n\nUse tree to display the file structure (matches that shown above).\nActivate our environment: conda activate hdruk_tests (which includes pytest).\nInstall our local package (if not already installed): pip install -e ..\nVerify the installation with conda list, confirming our waitingtimes package appears.\nShow you the test file (nano tests/test_intro_simple.py) (matches the one from the previous page on writing basic tests).\nRun the test with pytest tests/test_intro_simple.py - and it passes! 🎉\n\n\nIf you’re unfamiliar with how to set up a package, check out our tutorial on packaging your research project.",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to run tests"
+    ]
+  },
+  {
+    "objectID": "pages/run_tests.html#example-non-package-structure",
+    "href": "pages/run_tests.html#example-non-package-structure",
+    "title": "How to run tests",
+    "section": "Example: Non-package structure",
+    "text": "Example: Non-package structure\nYou don’t need a full package to use pytest. When you code exists in .py files but isn’t packaged, you can still run tests from the terminal. Your project might, for example, look like:\nproject/\n├── patient_analysis.py\n└── test_intro_simple.py\nIn the video below, we:\n\nUse tree to display the file structure - there is just a .py file with the summary_stats() function and test_intro_simple.py file alongside it.\nView the test file with nano test_intro_simple.py, showing it imports locally since files are in the same folder.\nRun the test with pytest, since the file follows the test_ naming pattern.",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to run tests"
+    ]
+  },
+  {
+    "objectID": "pages/run_tests.html#alternative-options",
+    "href": "pages/run_tests.html#alternative-options",
+    "title": "How to run tests",
+    "section": "Alternative options",
+    "text": "Alternative options\nWhile running tests from the command line is the recommended approach, there are alternative tools for specific use cases.\n\ntestbook\ntestbook allows you to test code within Jupyter notebooks:\n# Install: pip install testbook\nfrom testbook import testbook\n\n@testbook('my_notebook.ipynb', execute=True)\ndef test_notebook_function(tb):\n    func = tb.ref(\"add\")\n    assert func(2, 3) == 5\n\n\nipytest\nipytest lets you run pytest directly inside Jupyter notebook cells:\n# Install: pip install ipytest\nimport ipytest\nipytest.autoconfig()\n\n# In another cell\ndef add(a, b):\n    return a + b\n\n# In a test cell\n%%ipytest\ndef test_add():\n    assert add(2, 3) == 5\n\n\nWhy command line testing is better\nRunning tests from the terminal with code organised in .py files and a modular structure is the preferred approach because:\n\nTest code is separate from analysis code, making both easier to understand and maintain.\nTests can be run automatically in continuous integration (CI) pipelines, before commits, or on schedule.\nAs your project grows, you can easily add more test files and organise them logically without cluttering notebooks or scripts.",
     "crumbs": [
       "Introduction to writing and running tests",
       "How to run tests"
