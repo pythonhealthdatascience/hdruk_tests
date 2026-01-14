@@ -3,7 +3,7 @@ Function to summarise patient waiting time data.
 
 Just contains this function, as this folder is used to demonstrate how to run
 tests when code is not structured as package. For full example code (which is
-structured as a package), see examples/python/.
+structured as a package), see examples/python_package/.
 """
 
 import numpy as np
