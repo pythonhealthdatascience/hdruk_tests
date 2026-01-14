@@ -12,4 +12,175 @@ use_condaenv("hdruk_tests", required = TRUE)
 
 <br>
 
-<!-- creating a small case study, and examples of different tests -->
+A **unit** test checks one small, isolated unit of code - usually a single function or method. Your aim is to check that, for specific inputs, the function behaves exactly as promised.
+
+## Example: `import_patient_data()`
+
+Let's use the `import_patient_data()` function from our case study. Its main behaviours are:
+
+* It reads a CSV into a pandas DataFrame.
+* It requires the columns to match a specific list exactly (names and order).
+* It raises a `ValueError` if the columns are not exactly as expected.
+* It returns a DataFrame containing the raw patient-level data.
+
+```{python}
+import pandas as pd
+from pathlib import Path
+import pytest
+```
+
+```{python}
+#| file: code/import_patient_data.py
+```
+
+## Coming up with ideas for unit tests
+
+It's very normal to look at a function and wonder "what could I possibly test?". A helpful process to follow is to turn the function's "promises" into tests.
+
+### 1. Start from the docstring
+
+You should always be writing docstrings for your functions or classes (not sure how? [Check out our tutorial here](https://pythonhealthdatascience.github.io/des_rap_book/pages/guide/style_docs/docstrings.html)).
+
+In the docstring, you will make several promises about how the function should behave. For our example above, these are:
+
+* It should accept `str` or `Path` as `path`.
+* It should return a pandas DataFrame.
+* It should raise a `ValueError` if the columns are not exactly as expected.
+
+Each of these becomes something you can check with a test.
+
+### 2. Define what "success" looks like
+
+Pick the simplest input that should work.
+
+* Create a small CSV with 5 columns in the correct order and one or two data rows.
+* Write tests that:
+    * Assert the result is a pandas DataFrame.
+    * Assert `list(df.columns)` matches the expected list.
+
+> **Why would we check `list(df.columns)` if we know the function checks that?** It's because we are testing the promised behaviour of the function, rather than just trusting it is implemented correctly. Whilst it may currently enforce this requirement, someone could edit the code in future and accidentally remove that behaviour - in which case, the test would fail and let us know!
+
+```{python}
+def test_import_success(tmp_path):
+    """Small CSV with correct columns should work."""
+
+    expected_cols = [
+        "PATIENT_ID", "ARRIVAL_DATE", "ARRIVAL_TIME",
+        "SERVICE_DATE", "SERVICE_TIME",
+    ]
+
+    # Create temporary CSV file
+    df = pd.DataFrame(
+        [["p1", "2024-01-01", "08:00", "2024-01-01", "09:00"]],
+        columns=expected_cols,
+    )
+    csv_path = tmp_path / "patients.csv"
+    df_in.to_csv(csv_path, index=False)
+
+    # Run function and check it looks correct
+    result = import_patient_data(csv_path)
+    assert isinstance(result, pd.DataFrame)
+    assert list(result.columns) == expected_cols
+    pd.testing.assert_frame_equal(result, df_in)
+```
+
+### 3. List ways things can go wrong
+
+Now flip it: how can the input break the promises?
+
+For this function, you expect a `ValueError` if:
+
+* There are missing columns.
+* There are extra columns.
+* We have the required columns but in the wrong order.
+
+For each case, we can create a small DataFrame which triggers the problem and assert that a `ValueError` is raised.
+
+```{python}
+@pytest.mark.parametrize(
+    "columns",
+    [
+        # Example 1: Missing columns
+        [
+            "PATIENT_ID", "ARRIVAL_DATE", "ARRIVAL_TIME", "SERVICE_DATE"
+        ],
+        # Example 2: Extra columns
+        [
+            "PATIENT_ID", "ARRIVAL_DATE", "ARRIVAL_TIME",
+            "SERVICE_DATE", "SERVICE_TIME", "EXTRA",
+        ],
+        # Example 3: Right columns, wrong order
+        [
+            "ARRIVAL_DATE", "PATIENT_ID", "ARRIVAL_TIME",
+            "SERVICE_DATE", "SERVICE_TIME",
+        ],
+    ],
+)
+def test_import_errors(tmp_path, columns):
+    """Incorrect columns should trigger ValueError."""
+
+    # Create temporary CSV file
+    df_in = pd.DataFrame([range(len(columns))], columns=columns)
+    csv_path = tmp_path / "patients.csv"
+    df_in.to_csv(csv_path, index=False)
+
+    # Check it raises ValueError
+    with pytest.raises(ValueError):
+        import_patient_data(csv_path)
+```
+
+### 4. Consider edge cases
+
+Edge cases are inputs that are unusual but still realistic. For example:
+
+* An empty CSV that has the correct header but no data rows. Should that succeed and return an empty DataFrame, or should it fail?
+
+In this case, you might decide that an empty CSV with correct headers is fine and does not raise an error. The important part is that the test makes this decision explicit so readers know what "correct" means at the edges.
+
+### 5. Vary valid input forms
+
+If the function promises to accept multiple equivalent input forms, test that they really are equivalent - for example:
+
+* Call with a string path.
+* Call with a `Path` object.
+
+Both should succeed and return DataFrames with the same columns and data.
+
+```{python}
+def test_import_path_types(tmp_path):
+    """str and Path inputs should behave identically."""
+    # Create temporary CSV file
+    expected_cols = [
+        "PATIENT_ID",
+        "ARRIVAL_DATE", "ARRIVAL_TIME",
+        "SERVICE_DATE", "SERVICE_TIME",
+    ]
+    df_in = pd.DataFrame(
+        [["p1", "2024-01-01", "08:00", "2024-01-01", "09:00"]],
+        columns=expected_cols,
+    )
+    csv_path = tmp_path / "patients.csv"
+    df_in.to_csv(csv_path, index=False)
+
+    # Run function with str or Path inputs
+    df_str = import_patient_data(str(csv_path))
+    df_path = import_patient_data(csv_path)
+
+    # Check that results are the same
+    pd.testing.assert_frame_equal(df_str, df_path)
+```
+
+## Decide when to stop
+
+You cannot test everything. In practice, you have done enough when:
+
+* Every promise in the docstring has at least one "works" test and one "fails clearly" test.
+* Every important branch in the code (like the `ValueError` path) is tested.
+
+Additional tests (and extra validation inside the function itself) should be driven by real needs (e.g. bug reports, tricky edge cases in your domain) and not by trying to anticipate and test every possible theoretical failure.
+
+::: {.box-grey}
+
+**In real research projects, you will rarely unit test every single function or every possible case. The aim here is not perfection, but to build a reasonable level of confidence in the most important behaviours of your code.**
+
+:::
