@@ -136,7 +136,7 @@ def test_notebook_function(tb):
 
 ### ipytest
 
-[ipytest](https://github.com/chmp/ipytest)
+[ipytest](https://github.com/chmp/ipytest) lets you run pytest directly inside Jupyter notebook cells:
 
 ```{.python}
 # Install: pip install ipytest
@@ -167,6 +167,8 @@ Running tests from the terminal with code organised in `.py` files and a modular
 :::
 
 ::: {.r-content}
+
+TODO.
 
 <!-- ROUGH NOTES
 

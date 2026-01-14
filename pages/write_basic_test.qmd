@@ -37,6 +37,7 @@ import pytest
 
 
 def test_example():
+    """Simple test confirming 2 + 2 = 4"""
     result = 2 + 2
     assert result == 4
 ```
@@ -75,6 +76,8 @@ test_that("2 add 2 equals 4", {
 
 :::
 
+<div style="margin-top: 3em"></div>
+
 ## A simple test for `summary_stats`
 
 Here is a minimal example using the `summary_stats` function from the case study. For a single value, the function should return that value as the mean and `NaN` for the other statistics, because there is not enough data to define a standard deviation or confidence interval.
@@ -94,19 +97,17 @@ import pytest
 def test_summary_stats_single_value():
     """Running summary_stats on a single value should only return mean."""
     data = pd.Series([10])
-    mean, std, ci_lower, ci_upper = summary_stats(data)
-    assert mean == 10
-    assert pd.isna(std)
-    assert pd.isna(ci_lower)
-    assert pd.isna(ci_upper)
+    res = summary_stats(data)
+    assert res["mean"] == 10
+    assert pd.isna(res["std_dev"])
+    assert pd.isna(res["ci_lower"])
+    assert pd.isna(res["ci_upper"])
 ```
 
 :::
 
 ::: {.r-content}
 
-```{r}
-#
-```
+TODO.
 
 :::
