@@ -1,16 +1,3 @@
-"""
-Back testing.
-"""
-
-from pathlib import Path
-
-import numpy as np
-
-from waitingtimes.patient_analysis import (
-    import_patient_data, calculate_wait_times, summary_stats
-)
-
-
 def test_reproduction():
     """Re-running on historical data should produce consistent results."""
     # Specify path to historical data

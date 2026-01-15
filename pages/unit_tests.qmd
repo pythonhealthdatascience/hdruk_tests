@@ -10,6 +10,137 @@ use_condaenv("hdruk_tests", required = TRUE)
 
 {{< include /assets/language-selector.html >}}
 
-<br>
+## What is a unit test?
 
-<!-- creating a small case study, and examples of different tests -->
+A **unit** test checks one small, isolated unit of code - usually a single function or method. Your aim is to check that, for specific inputs, the function behaves exactly as promised.
+
+## Example: `import_patient_data()`
+
+Let's use the `import_patient_data()` function from our case study. We will import it to our test script, alongside other required packages.
+
+```{python}
+#| execute: false
+#| file: code/test_unit__imports.py
+```
+
+Its main behaviours are that it:
+
+1. Reads a CSV into a pandas DataFrame.
+2. Requires the columns to match a specific list exactly (names and order).
+3. Raises a `ValueError` if columns are incorrect.
+4. Returns a DataFrame with raw patient-level data.
+
+::: {.callout-note title="View `import_patient_data()`" collapse="true"}
+
+```{python}
+#| execute: false
+#| file: code/patient_analysis__import_patient_data.py
+```
+
+:::
+
+## How to write unit tests
+
+<div class="h3-tight"></div>
+
+### 1. Start from the docstring
+
+Always write docstrings for your functions and classes (see [our docstring tutorial](https://pythonhealthdatascience.github.io/des_rap_book/pages/guide/style_docs/docstrings.html) if you need guidance).
+
+Your docstring makes **promises** about how the function should behave. For `import_patient_data()`, the docstring promises it will:
+
+* Accept `str` or `Path` as the `path` parameter
+* Return a pandas DataFrame
+* Raise `ValueError` if columns are incorrect
+
+Each of these becomes something you can check with a test.
+
+### 2. Define what "success" looks like
+
+Pick the simplest input that should work.
+
+In our case, we can create a small CSV with correct columns in the right order and one or two data rows. We can then write tests that confirm:
+
+* The result is a pandas DataFrame.
+* The columns match exactly: `list(df.columns) == expected_list`
+
+::: {.callout-note title="Why test columns if the function already checks them?"}
+
+Because we are testing the **promised** behaviour of the function, not just trusting its current implementation.
+
+If someone edits the code later and accidentally removes that validation, your test will catch it!
+
+:::
+
+```{python}
+#| execute: false
+#| file: code/test_unit__test_import_success.py
+```
+
+### 3. List ways things can go wrong
+
+Now think: how can inputs break the promises?
+
+For `import_patient_data()`, a `ValueError` should be raised when we have:
+
+* Missing columns
+* Extra columns
+* Correct columns but wrong order
+
+For each case, we can create a small DataFrame which triggers the problem and assert that a `ValueError` is raised.
+
+```{python}
+#| execute: false
+#| file: code/test_unit__test_import_errors.py
+```
+
+### 4. Consider edge cases
+
+Edge cases are inputs that are unusual but still realistic.
+
+For example, what if the CSV has the correct headers but no data? Should that succeed and return an empty DataFrame, or should it fail?
+
+In this case, you might decide that an empty CSV with correct headers is fine and does not raise an error. You may still choose to write a test though, as that makes this decision explicit so other coders know what "correct" means at the edges.
+
+```{python}
+#| execute: false
+#| file: code/test_unit__test_import_empty_csv.py
+```
+
+### 5. Test all equivalent input forms
+
+If the function promises to accept multiple equivalent input types, verify they really are equivalent.
+
+With `import_patient_data()`, we expect a `str` or `Path` object to both succeed and return the same DataFrame.
+
+```{python}
+#| execute: false
+#| file: code/test_unit__test_import_path_types.py
+```
+
+## Running our example tests
+
+::: {.callout-note title="Test output"}
+
+```{python}
+#| echo: false
+import pytest
+pytest.main(["../examples/python_package/tests/test_unit.py"])
+```
+
+:::
+
+## When to stop writing tests
+
+You cannot test everything. You've written enough tests when:
+
+* Every promise in the docstring is tested.
+* Every important code branch (like error handling) is tested.
+
+Write additional tests based on real needs (e.g., bug reports, tricky edge cases in your context), and not by trying to anticipate every theoretical failure.
+
+::: {.box-grey}
+
+**In real research projects, you won't unit test every single function or every possible case.** The aim is not perfection, but reasonable confidence in the most important behaviours of your code.
+
+:::

@@ -5,3 +5,5 @@ This repository contains code behind our website with materials for the 'Testing
 You can view the website here: <https://pythonhealthdatascience.github.io/hdruk_tests/>
 
 [![](images/website_screenshot.png)](https://pythonhealthdatascience.github.io/hdruk_tests/)
+
+For an explanation of how this site is set up and quality-controlled, please see `CONTRIBUTING.md`.

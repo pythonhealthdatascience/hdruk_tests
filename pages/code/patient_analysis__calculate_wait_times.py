@@ -12,7 +12,7 @@ def calculate_wait_times(df):
     -------
     pandas.DataFrame
         Copy of the input DataFrame with additional columns:
-        `arrival_datetime`, `service_datetime`, and `wait_minutes`.
+        `arrival_datetime`, `service_datetime`, and `waittime`.
     """
     df = df.copy()
 
@@ -22,11 +22,11 @@ def calculate_wait_times(df):
             df[f"{prefix}_DATE"].astype(str) +
             " " +
             df[f"{prefix}_TIME"].astype(str).str.zfill(4),
-            format="%Y-%m-%d %H%M",
+            format="%Y-%m-%d %H%M"
         )
 
     # Waiting time in minutes
-    df["wait_minutes"] = (
+    df["waittime"] = (
         df["service_datetime"] - df["arrival_datetime"]
     ) / pd.Timedelta(minutes=1)
 

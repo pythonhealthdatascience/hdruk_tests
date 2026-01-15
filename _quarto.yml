@@ -1,5 +1,7 @@
 project:
   type: website
+  pre-render:
+    - python tools/extract_snippets.py
 
 website:
   title: "Testing in Research Workflows"
@@ -27,9 +29,10 @@ website:
           - pages/parametrising_tests.qmd
       - section: Types of test
         contents:
-          - pages/functional_tests.qmd
           - pages/unit_tests.qmd
+          - pages/functional_tests.qmd
           - pages/back_tests.qmd
+      - pages/break.qmd
       - pages/test_coverage.qmd
       - pages/github_actions.qmd
       - pages/example_repositories.qmd

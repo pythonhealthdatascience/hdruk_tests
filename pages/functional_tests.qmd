@@ -12,4 +12,88 @@ use_condaenv("hdruk_tests", required = TRUE)
 
 <br>
 
-<!-- creating a small case study, and examples of different tests -->
+## What is a functional test?
+
+**Functional** tests are broader than unit tests. They focus on a whole feature or workflow, often involving several functions or classes working together. They check whether this end-to-end behaviour gives the correct outputs for given inputs, matching our requirements or expected results.
+
+## Example: waiting times case study
+
+We will return to our [waiting times case study](case_study.qmd) which involved three functions:
+
+* `import_patient_data()` - imports raw patient data and checks that the required columns are present.
+* `calculate_wait_times` - adds arrival and service datetimes, and waiting time in minutes.
+* `summary_stats` - calculates mean, standard deviation and 95% confidence interval.
+
+Unlike unit tests, which check each function in isolation, functional tests run all three steps together and verify the end-to-end workflow produces correct results.
+
+We will need the follow imports in our test script:
+
+```{python}
+#| execute: false
+#| file: code/test_functional__imports.py
+```
+
+## How to write functional tests
+
+### 1. Identify the feature or workflow to test
+
+Start by choosing the complete feature or workflow you want to validate.
+
+In our case study, we only have a simple three-step pipeline - but more complex projects may have multiple intersecting workflows you want to focus on.
+
+### 2. Define inputs and expected outputs
+
+Think about realistic scenarios that cover:
+
+* **Success cases:** standard inputs where everything should work correctly.
+* **Variations:** realistic variations in the inputs (e.g., different sample sizes, different distributions in the data input).
+* **Edge cases:** unusual but plausible inputs (e.g., unusual sample sizes, boundary values).
+* **Error cases:** invalid inputs that should trigger errors.
+
+### 3. Write tests for these scenarios
+
+#### Success case: typical data
+
+This test confirms the workflow succeeds with standard inputs and produces correct summary statistics.
+
+```{python}
+#| file: code/test_functional__test_workflow_success.py
+```
+
+#### Variation: data with different distributions
+
+This test confirms the workflow handles realistic variation in wait times.
+
+```{python}
+#| file: code/test_functional__test_workflow_with_variation.py
+```
+
+#### Error case: invalid input data
+
+This test confirms the workflow fails appropriately when given invalid data.
+
+```{python}
+#| file: code/test_functional__test_missing_date_error.py
+```
+
+## Running our example tests
+
+::: {.callout-note title="Test output"}
+
+```{python}
+#| echo: false
+import pytest
+pytest.main(["../examples/python_package/tests/test_functional.py"])
+```
+
+:::
+
+## When to stop writing tests
+
+You cannot test everything. You've written enough tests when:
+
+* Critical workflows are covered with at least one success case.
+* Import variations and edge cases are tested.
+* Key error conditions are verified.
+
+Focus your testing effort on workflows that matter to your research and scenarios you're likely to encounter in practice. You're building confidence in your code, not trying to test every theoretical possibility.
