@@ -218,14 +218,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/functional_tests.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Functional tests</span></a>
+  <a href="../pages/unit_tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Unit tests</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/unit_tests.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Unit tests</span></a>
+  <a href="../pages/functional_tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Functional tests</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -236,6 +236,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
       </ul>
   </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/break.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">What was the point? Let’s break it and see!</span></a>
+  </div>
+</li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/test_coverage.html" class="sidebar-item-text sidebar-link">
@@ -306,8 +312,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># If your code is in a subdirectory</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.analysis <span class="im">import</span> summary_stats</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="test-files-that-following-the-test_-naming-convention" class="level3">
-<h3 class="anchored" data-anchor-id="test-files-that-following-the-test_-naming-convention">2. Test files that following the <code>test_</code> naming convention</h3>
+<section id="test-files-following-the-test_-naming-convention" class="level3">
+<h3 class="anchored" data-anchor-id="test-files-following-the-test_-naming-convention">2. Test files following the <code>test_</code> naming convention</h3>
 <p>Pytest automatically discovers and runs tests when your test files start with <code>test_</code>. It is also typical (but not mandatory) to store test files in a folder called <code>tests/</code>. For example:</p>
 <pre><code>tests/
 ├── test_back.py

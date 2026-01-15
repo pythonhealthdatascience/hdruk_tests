@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +65,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../pages/unit_tests.html" rel="next">
-<link href="../pages/parametrising_tests.html" rel="prev">
+<link href="../pages/back_tests.html" rel="next">
+<link href="../pages/unit_tests.html" rel="prev">
 <link href="../images/futures.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -114,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/functional_tests.html">Types of test</a></li><li class="breadcrumb-item"><a href="../pages/functional_tests.html">Functional tests</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/unit_tests.html">Types of test</a></li><li class="breadcrumb-item"><a href="../pages/functional_tests.html">Functional tests</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -181,14 +216,14 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/functional_tests.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Functional tests</span></a>
+  <a href="../pages/unit_tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Unit tests</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/unit_tests.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Unit tests</span></a>
+  <a href="../pages/functional_tests.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Functional tests</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -199,6 +234,12 @@ ul.task-list li input[type="checkbox"] {
 </li>
       </ul>
   </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/break.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">What was the point? Let’s break it and see!</span></a>
+  </div>
+</li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/test_coverage.html" class="sidebar-item-text sidebar-link">
@@ -226,7 +267,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content column-page-right" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/functional_tests.html">Types of test</a></li><li class="breadcrumb-item"><a href="../pages/functional_tests.html">Functional tests</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/unit_tests.html">Types of test</a></li><li class="breadcrumb-item"><a href="../pages/functional_tests.html">Functional tests</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Functional tests</h1>
 </div>
@@ -252,9 +293,180 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <br>
 <p><br></p>
-<!-- creating a small case study, and examples of different tests -->
+<section id="what-is-a-functional-test" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-a-functional-test">What is a functional test?</h2>
+<p><strong>Functional</strong> tests are broader than unit tests. They focus on a whole feature or workflow, often involving several functions or classes working together. They check whether this end-to-end behaviour gives the correct outputs for given inputs, matching our requirements or expected results.</p>
+</section>
+<section id="example-waiting-times-case-study" class="level2">
+<h2 class="anchored" data-anchor-id="example-waiting-times-case-study">Example: waiting times case study</h2>
+<p>We will return to our <a href="../pages/case_study.html">waiting times case study</a> which involved three functions:</p>
+<ul>
+<li><code>import_patient_data()</code> - imports raw patient data and checks that the required columns are present.</li>
+<li><code>calculate_wait_times</code> - adds arrival and service datetimes, and waiting time in minutes.</li>
+<li><code>summary_stats</code> - calculates mean, standard deviation and 95% confidence interval.</li>
+</ul>
+<p>Unlike unit tests, which check each function in isolation, functional tests run all three steps together and verify the end-to-end workflow produces correct results.</p>
+<p>We will need the follow imports in our test script:</p>
+<div class="cell" data-execute="false">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytest</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> waitingtimes.patient_analysis <span class="im">import</span> (</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    import_patient_data, calculate_wait_times, summary_stats</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="how-to-write-functional-tests" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-write-functional-tests">How to write functional tests</h2>
+<section id="identify-the-feature-or-workflow-to-test" class="level3">
+<h3 class="anchored" data-anchor-id="identify-the-feature-or-workflow-to-test">1. Identify the feature or workflow to test</h3>
+<p>Start by choosing the complete feature or workflow you want to validate.</p>
+<p>In our case study, we only have a simple three-step pipeline - but more complex projects may have multiple intersecting workflows you want to focus on.</p>
+</section>
+<section id="define-inputs-and-expected-outputs" class="level3">
+<h3 class="anchored" data-anchor-id="define-inputs-and-expected-outputs">2. Define inputs and expected outputs</h3>
+<p>Think about realistic scenarios that cover:</p>
+<ul>
+<li><strong>Success cases:</strong> standard inputs where everything should work correctly.</li>
+<li><strong>Variations:</strong> realistic variations in the inputs (e.g., different sample sizes, different distributions in the data input).</li>
+<li><strong>Edge cases:</strong> unusual but plausible inputs (e.g., unusual sample sizes, boundary values).</li>
+<li><strong>Error cases:</strong> invalid inputs that should trigger errors.</li>
+</ul>
+</section>
+<section id="write-tests-for-these-scenarios" class="level3">
+<h3 class="anchored" data-anchor-id="write-tests-for-these-scenarios">3. Write tests for these scenarios</h3>
+<section id="success-case-typical-data" class="level4">
+<h4 class="anchored" data-anchor-id="success-case-typical-data">Success case: typical data</h4>
+<p>This test confirms the workflow succeeds with standard inputs and produces correct summary statistics.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_workflow_success(tmp_path):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Complete workflow should calculate correct wait statistics."""</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create test data with known values</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    test_data <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PATIENT_ID"</span>: [<span class="st">"p1"</span>, <span class="st">"p2"</span>, <span class="st">"p3"</span>],</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ARRIVAL_DATE"</span>: [<span class="st">"2024-01-01"</span>, <span class="st">"2024-01-01"</span>, <span class="st">"2024-01-02"</span>],</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ARRIVAL_TIME"</span>: [<span class="st">"0800"</span>, <span class="st">"0930"</span>, <span class="st">"1015"</span>],</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SERVICE_DATE"</span>: [<span class="st">"2024-01-01"</span>, <span class="st">"2024-01-01"</span>, <span class="st">"2024-01-02"</span>],</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SERVICE_TIME"</span>: [<span class="st">"0830"</span>, <span class="st">"1000"</span>, <span class="st">"1045"</span>],</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Write test CSV</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    csv_path <span class="op">=</span> tmp_path <span class="op">/</span> <span class="st">"patients.csv"</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    test_data.to_csv(csv_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Run complete workflow</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> import_patient_data(csv_path)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> calculate_wait_times(df)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    stats <span class="op">=</span> summary_stats(df[<span class="st">"waittime"</span>])</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Verify the workflow produces correct results</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Expected wait times: 30, 30, 30 minutes</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> stats[<span class="st">"mean"</span>] <span class="op">==</span> <span class="fl">30.0</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> stats[<span class="st">"std_dev"</span>] <span class="op">==</span> <span class="fl">0.0</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> stats[<span class="st">"ci_lower"</span>] <span class="op">==</span> <span class="fl">30.0</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> stats[<span class="st">"ci_upper"</span>] <span class="op">==</span> <span class="fl">30.0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="variation-data-with-different-distributions" class="level4">
+<h4 class="anchored" data-anchor-id="variation-data-with-different-distributions">Variation: data with different distributions</h4>
+<p>This test confirms the workflow handles realistic variation in wait times.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_workflow_with_variation(tmp_path):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Workflow should correctly compute statistics for variable wait times."""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create test data with known wait times: 15, 30, 45 minutes</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    test_data <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PATIENT_ID"</span>: [<span class="st">"p1"</span>, <span class="st">"p2"</span>, <span class="st">"p3"</span>],</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ARRIVAL_DATE"</span>: [<span class="st">"2024-01-01"</span>, <span class="st">"2024-01-01"</span>, <span class="st">"2024-01-01"</span>],</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ARRIVAL_TIME"</span>: [<span class="st">"0800"</span>, <span class="st">"0900"</span>, <span class="st">"1000"</span>],</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SERVICE_DATE"</span>: [<span class="st">"2024-01-01"</span>, <span class="st">"2024-01-01"</span>, <span class="st">"2024-01-01"</span>],</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SERVICE_TIME"</span>: [<span class="st">"0815"</span>, <span class="st">"0930"</span>, <span class="st">"1045"</span>],</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    csv_path <span class="op">=</span> tmp_path <span class="op">/</span> <span class="st">"patients.csv"</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    test_data.to_csv(csv_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Run complete workflow</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> import_patient_data(csv_path)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> calculate_wait_times(df)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    stats <span class="op">=</span> summary_stats(df[<span class="st">"waittime"</span>])</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Verify mean and standard deviation</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> stats[<span class="st">"mean"</span>] <span class="op">==</span> <span class="dv">30</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.isclose(stats[<span class="st">"std_dev"</span>], <span class="dv">15</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># CI should be symmetric around mean for this small sample</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> stats[<span class="st">"ci_lower"</span>] <span class="op">&lt;</span> stats[<span class="st">"mean"</span>] <span class="op">&lt;</span> stats[<span class="st">"ci_upper"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="error-case-invalid-input-data" class="level4">
+<h4 class="anchored" data-anchor-id="error-case-invalid-input-data">Error case: invalid input data</h4>
+<p>This test confirms the workflow fails appropriately when given invalid data.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_missing_date_error(tmp_path):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Workflow should raise error when dates are missing."""</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    test_data <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PATIENT_ID"</span>: [<span class="st">"p1"</span>, <span class="st">"p2"</span>, <span class="st">"p3"</span>],</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ARRIVAL_DATE"</span>: [<span class="st">"2024-01-01"</span>, <span class="st">"2024-01-01"</span>, <span class="st">"2024-01-01"</span>],</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ARRIVAL_TIME"</span>: [<span class="st">"0800"</span>, <span class="st">"0900"</span>, <span class="st">"1000"</span>],</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SERVICE_DATE"</span>: [<span class="st">"2024-01-01"</span>, pd.NaT, <span class="st">"2024-01-01"</span>],</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SERVICE_TIME"</span>: [<span class="st">"0830"</span>, <span class="st">"1000"</span>, <span class="st">"1045"</span>],</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    csv_path <span class="op">=</span> tmp_path <span class="op">/</span> <span class="st">"patients.csv"</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    test_data.to_csv(csv_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Workflow should fail when calculating wait times with missing dates</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> import_patient_data(csv_path)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> pytest.raises(<span class="pp">ValueError</span>, match<span class="op">=</span><span class="st">"time data"</span>):</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        df <span class="op">=</span> calculate_wait_times(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+</section>
+<section id="running-our-example-tests" class="level2">
+<h2 class="anchored" data-anchor-id="running-our-example-tests">Running our example tests</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="Test output">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Test output
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>============================= test session starts ==============================
+platform linux -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0
+rootdir: /__w/hdruk_tests/hdruk_tests/examples/python_package
+configfile: pyproject.toml
+collected 3 items
+
+../examples/python_package/tests/test_functional.py ...                  [100%]
+
+============================== 3 passed in 0.03s ===============================
+&lt;ExitCode.OK: 0&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="when-to-stop-writing-tests" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-stop-writing-tests">When to stop writing tests</h2>
+<p>You cannot test everything. You’ve written enough tests when:</p>
+<ul>
+<li>Critical workflows are covered with at least one success case.</li>
+<li>Import variations and edge cases are tested.</li>
+<li>Key error conditions are verified.</li>
+</ul>
+<p>Focus your testing effort on workflows that matter to your research and scenarios you’re likely to encounter in practice. You’re building confidence in your code, not trying to test every theoretical possibility.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script>
@@ -689,13 +901,13 @@ document.addEventListener('DOMContentLoaded', function() {
   </script>
 <nav class="page-navigation column-page-right">
   <div class="nav-page nav-page-previous">
-      <a href="../pages/parametrising_tests.html" class="pagination-link" aria-label="Parameterising tests">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Parameterising tests</span>
+      <a href="../pages/unit_tests.html" class="pagination-link" aria-label="Unit tests">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Unit tests</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../pages/unit_tests.html" class="pagination-link" aria-label="Unit tests">
-        <span class="nav-page-text">Unit tests</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../pages/back_tests.html" class="pagination-link" aria-label="Back tests">
+        <span class="nav-page-text">Back tests</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

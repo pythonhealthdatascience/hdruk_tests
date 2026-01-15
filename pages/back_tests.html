@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +65,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../pages/test_coverage.html" rel="next">
-<link href="../pages/unit_tests.html" rel="prev">
+<link href="../pages/break.html" rel="next">
+<link href="../pages/functional_tests.html" rel="prev">
 <link href="../images/futures.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -114,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/functional_tests.html">Types of test</a></li><li class="breadcrumb-item"><a href="../pages/back_tests.html">Back tests</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/unit_tests.html">Types of test</a></li><li class="breadcrumb-item"><a href="../pages/back_tests.html">Back tests</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -181,14 +216,14 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/functional_tests.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Functional tests</span></a>
+  <a href="../pages/unit_tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Unit tests</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/unit_tests.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Unit tests</span></a>
+  <a href="../pages/functional_tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Functional tests</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -199,6 +234,12 @@ ul.task-list li input[type="checkbox"] {
 </li>
       </ul>
   </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/break.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">What was the point? Let’s break it and see!</span></a>
+  </div>
+</li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/test_coverage.html" class="sidebar-item-text sidebar-link">
@@ -226,7 +267,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content column-page-right" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/functional_tests.html">Types of test</a></li><li class="breadcrumb-item"><a href="../pages/back_tests.html">Back tests</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/unit_tests.html">Types of test</a></li><li class="breadcrumb-item"><a href="../pages/back_tests.html">Back tests</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Back tests</h1>
 </div>
@@ -252,9 +293,80 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <br>
 <p><br></p>
-<!-- creating a small case study, and examples of different tests -->
+<section id="what-is-a-back-test" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-a-back-test">What is a back test?</h2>
+<p>A <strong>back</strong> test involves running your workflow on historical data and confirming that results are consistent over time.</p>
+<p>It’s not focused on whether results are theoretically correct. It’s about <strong>consistency and reproducibility</strong> - confirming that code changes, environment updates, or data pipeline tweaks have not silently changed results.</p>
+<p>This overlaps with functional testing, but is distinct, because functional tests ask “is this output <em>correct</em>” whereas back tests ask “is this output <em>the same as before</em>?”.</p>
+</section>
+<section id="example-waiting-times-case-study" class="level2">
+<h2 class="anchored" data-anchor-id="example-waiting-times-case-study">Example: waiting times case study</h2>
+<p>We will run back tests using the <a href="../pages/case_study.html">dataset we introduced for our waiting times case study</a>.</p>
+<p>On the test page, we need to import:</p>
+<div class="cell" data-execute="false">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> waitingtimes.patient_analysis <span class="im">import</span> (</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    import_patient_data, calculate_wait_times, summary_stats</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="back-test" class="level2">
+<h2 class="anchored" data-anchor-id="back-test">Back test</h2>
+<div class="cell" data-execute="false">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_reproduction():</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Re-running on historical data should produce consistent results."""</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Specify path to historical data</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    csv_path <span class="op">=</span> Path(<span class="va">__file__</span>).parent.joinpath(<span class="st">"data/patient_data.csv"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Run functions</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> import_patient_data(csv_path)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> calculate_wait_times(df)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    stats <span class="op">=</span> summary_stats(df[<span class="st">"waittime"</span>])</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Verify the workflow produces consistent results</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.isclose(stats[<span class="st">"mean"</span>], <span class="fl">4.1666</span>, rtol<span class="op">=</span><span class="fl">0.0001</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.isclose(stats[<span class="st">"std_dev"</span>], <span class="fl">2.7869</span>, rtol<span class="op">=</span><span class="fl">0.0001</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.isclose(stats[<span class="st">"ci_lower"</span>], <span class="fl">1.2420</span>, rtol<span class="op">=</span><span class="fl">0.0001</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> np.isclose(stats[<span class="st">"ci_upper"</span>], <span class="fl">7.0913</span>, rtol<span class="op">=</span><span class="fl">0.0001</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="running-our-example-test" class="level2">
+<h2 class="anchored" data-anchor-id="running-our-example-test">Running our example test</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="Test output">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Test output
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>============================= test session starts ==============================
+platform linux -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0
+rootdir: /__w/hdruk_tests/hdruk_tests/examples/python_package
+configfile: pyproject.toml
+collected 1 item
+
+../examples/python_package/tests/test_back.py .                          [100%]
+
+============================== 1 passed in 0.02s ===============================
+&lt;ExitCode.OK: 0&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="when-should-you-update-your-back-tests" class="level2">
+<h2 class="anchored" data-anchor-id="when-should-you-update-your-back-tests">When should you update your back tests?</h2>
+<p><strong>Errors:</strong> If you identify an error in your pipeline, you first fix the code and then deliberately update the back test in isolation, so you know the only change in behaviour is the error fix and not something unintended elsewhere.</p>
+<p><strong>Changes over time:</strong> As your research evolves, you may update the workflow (e.g., improve the wait time calculation method) or use more recent datasets. You can keep the old back test running alongside new ones - this verifies that changes to the workflow don’t accidentally alter results on historical data, while new back tests validate that updated methods work correctly on current data.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script>
@@ -689,13 +801,13 @@ document.addEventListener('DOMContentLoaded', function() {
   </script>
 <nav class="page-navigation column-page-right">
   <div class="nav-page nav-page-previous">
-      <a href="../pages/unit_tests.html" class="pagination-link" aria-label="Unit tests">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Unit tests</span>
+      <a href="../pages/functional_tests.html" class="pagination-link" aria-label="Functional tests">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Functional tests</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../pages/test_coverage.html" class="pagination-link" aria-label="Test coverage">
-        <span class="nav-page-text">Test coverage</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../pages/break.html" class="pagination-link" aria-label="What was the point? Let's break it and see!">
+        <span class="nav-page-text">What was the point? Let’s break it and see!</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

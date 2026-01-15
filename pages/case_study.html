@@ -217,14 +217,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/functional_tests.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Functional tests</span></a>
+  <a href="../pages/unit_tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Unit tests</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../pages/unit_tests.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Unit tests</span></a>
+  <a href="../pages/functional_tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Functional tests</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -235,6 +235,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
       </ul>
   </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/break.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">What was the point? Let’s break it and see!</span></a>
+  </div>
+</li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../pages/test_coverage.html" class="sidebar-item-text sidebar-link">
@@ -298,6 +304,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="packages" class="level2">
 <h2 class="anchored" data-anchor-id="packages">Packages</h2>
 <div class="python-content">
+<!-- We don't use code/patient_analysis__imports.py as we have some additional imports used for displaying things nicely -->
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
@@ -360,7 +367,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>We can run this function on our example dataset <code>patient_data.csv</code>.</p>
 <p>You can download a copy of this data here:</p>
-<p><a href="#dnldts53440" onclick="fetch('data:text/csv;base64,UEFUSUVOVF9JRCxBUlJJVkFMX0RBVEUsQVJSSVZBTF9USU1FLFNFUlZJQ0VfREFURSxTRVJWSUNFX1RJTUUKMSwyMDI1LTAxLTAxLDAwMDEsMjAyNS0wMS0wMSwwMDA3CjIsMjAyNS0wMS0wMSwwMDAyLDIwMjUtMDEtMDEsMDAwNAozLDIwMjUtMDEtMDEsMDAwMywyMDI1LTAxLTAxLDAwMTAKNCwyMDI1LTAxLTAxLDAwMDcsMjAyNS0wMS0wMSwwMDE0CjUsMjAyNS0wMS0wMSwwMDEwLDIwMjUtMDEtMDEsMDAxMgo2LDIwMjUtMDEtMDEsMDAxMCwyMDI1LTAxLTAxLDAwMTE=').then(res => res.blob()).then(blob => {
+<p><a href="#dnldts61310" onclick="fetch('data:text/csv;base64,UEFUSUVOVF9JRCxBUlJJVkFMX0RBVEUsQVJSSVZBTF9USU1FLFNFUlZJQ0VfREFURSxTRVJWSUNFX1RJTUUKMSwyMDI1LTAxLTAxLDAwMDEsMjAyNS0wMS0wMSwwMDA3CjIsMjAyNS0wMS0wMSwwMDAyLDIwMjUtMDEtMDEsMDAwNAozLDIwMjUtMDEtMDEsMDAwMywyMDI1LTAxLTAxLDAwMTAKNCwyMDI1LTAxLTAxLDAwMDcsMjAyNS0wMS0wMSwwMDE0CjUsMjAyNS0wMS0wMSwwMDEwLDIwMjUtMDEtMDEsMDAxMgo2LDIwMjUtMDEtMDEsMDAxMCwyMDI1LTAxLTAxLDAwMTE=').then(res => res.blob()).then(blob => {
       const downloadURL = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       document.body.appendChild(a);
@@ -368,11 +375,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       a.download = 'patient_data.csv.csv'; a.click();
       window.URL.revokeObjectURL(downloadURL);
       document.body.removeChild(a);
-        });"><button class="btn btn-primary downloadthis  " id="dnldts53440"><i class="bi bi-download"></i> Download the example patient-level data </button></a></p>
+        });"><button class="btn btn-primary downloadthis  " id="dnldts61310"><i class="bi bi-download"></i> Download the example patient-level data </button></a></p>
 <div class="python-content">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>raw_data <span class="op">=</span> import_patient_data(<span class="st">"data/patient_data.csv"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>raw_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>raw_data <span class="op">=</span> import_patient_data(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   <span class="st">"../examples/python_package/data/patient_data.csv"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>raw_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   PATIENT_ID ARRIVAL_DATE  ARRIVAL_TIME SERVICE_DATE  SERVICE_TIME
 0           1   2025-01-01             1   2025-01-01             7
@@ -407,7 +416,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">    -------</span></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">    pandas.DataFrame</span></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">        Copy of the input DataFrame with additional columns:</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">        `arrival_datetime`, `service_datetime`, and `wait_minutes`.</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">        `arrival_datetime`, `service_datetime`, and `waittime`.</span></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.copy()</span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
@@ -417,11 +426,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>            df[<span class="ss">f"</span><span class="sc">{</span>prefix<span class="sc">}</span><span class="ss">_DATE"</span>].astype(<span class="bu">str</span>) <span class="op">+</span></span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>            <span class="st">" "</span> <span class="op">+</span></span>
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>            df[<span class="ss">f"</span><span class="sc">{</span>prefix<span class="sc">}</span><span class="ss">_TIME"</span>].astype(<span class="bu">str</span>).<span class="bu">str</span>.zfill(<span class="dv">4</span>),</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>            <span class="bu">format</span><span class="op">=</span><span class="st">"%Y-%m-</span><span class="sc">%d</span><span class="st"> %H%M"</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>            <span class="bu">format</span><span class="op">=</span><span class="st">"%Y-%m-</span><span class="sc">%d</span><span class="st"> %H%M"</span></span>
 <span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        )</span>
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Waiting time in minutes</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"wait_minutes"</span>] <span class="op">=</span> (</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"waittime"</span>] <span class="op">=</span> (</span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        df[<span class="st">"service_datetime"</span>] <span class="op">-</span> df[<span class="st">"arrival_datetime"</span>]</span>
 <span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">/</span> pd.Timedelta(minutes<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
@@ -445,13 +454,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 4           5   2025-01-01            10   2025-01-01            12   
 5           6   2025-01-01            10   2025-01-01            11   
 
-     arrival_datetime    service_datetime  wait_minutes  
-0 2025-01-01 00:01:00 2025-01-01 00:07:00           6.0  
-1 2025-01-01 00:02:00 2025-01-01 00:04:00           2.0  
-2 2025-01-01 00:03:00 2025-01-01 00:10:00           7.0  
-3 2025-01-01 00:07:00 2025-01-01 00:14:00           7.0  
-4 2025-01-01 00:10:00 2025-01-01 00:12:00           2.0  
-5 2025-01-01 00:10:00 2025-01-01 00:11:00           1.0  </code></pre>
+     arrival_datetime    service_datetime  waittime  
+0 2025-01-01 00:01:00 2025-01-01 00:07:00       6.0  
+1 2025-01-01 00:02:00 2025-01-01 00:04:00       2.0  
+2 2025-01-01 00:03:00 2025-01-01 00:10:00       7.0  
+3 2025-01-01 00:07:00 2025-01-01 00:14:00       7.0  
+4 2025-01-01 00:10:00 2025-01-01 00:12:00       2.0  
+5 2025-01-01 00:10:00 2025-01-01 00:11:00       1.0  </code></pre>
 </div>
 </div>
 </div>
@@ -529,7 +538,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>We apply <code>summary_stats()</code> to the waiting times.</p>
 <div class="python-content">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> summary_stats(processed_data[<span class="st">"wait_minutes"</span>])</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> summary_stats(processed_data[<span class="st">"waittime"</span>])</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Format dictionary for display</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>formatted_results <span class="op">=</span> json.dumps(results, indent<span class="op">=</span><span class="dv">4</span>)</span>

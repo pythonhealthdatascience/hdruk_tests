@@ -15,7 +15,7 @@
     "href": "pages/parametrising_tests.html#example-testing-summary_stats",
     "title": "Parameterising tests",
     "section": "Example: Testing summary_stats()",
-    "text": "Example: Testing summary_stats()\n\nLet’s say we want to verify that our summary_stats() function works correctly for different datasets. Instead of writing separate test functions for each case, we can use pytest’s @pytest.mark.parametrize decorator:\n\nimport pandas as pd\nimport pytest\n\n\n@pytest.mark.parametrize(\n    \"data, expected_mean, expected_std, expected_ci_lower, expected_ci_upper\",\n    [\n        # Five value sample with known summary statistics\n        ([1.0, 2.0, 3.0, 4.0, 5.0], 3.0, 1.58, 1.04, 4.96),\n        # No variation: CI collapse to mean\n        ([5, 5, 5], 5, 0, 5, 5),\n    ],\n)\ndef test_summary_stats(\n    data, expected_mean, expected_std, expected_ci_lower, expected_ci_upper\n):\n    \"\"\"Running summary_stats returns expected values.\"\"\"\n    mean, std, ci_lower, ci_upper = summary_stats(pd.Series(data))\n    assert mean == pytest.approx(expected_mean, rel=5e-3)\n    assert std == pytest.approx(expected_std, rel=5e-3)\n    assert ci_lower == pytest.approx(expected_ci_lower, rel=5e-3)\n    assert ci_upper == pytest.approx(expected_ci_upper, rel=5e-3)\n\n\nHow it works\nThe @pytest.mark.parametrize decorator takes two arguments:\n\nParameter names (as a string). These variable names will be passed to your test function. For example:\n\n\"data, expected_mean, expected_std, expected_ci_lower, expected_ci_upper\"\n\nTest cases (as a list of tuples). Each tuple contains values for one test case. For example:\n\n[\n    # Five value sample with known summary statistics\n    ([1.0, 2.0, 3.0, 4.0, 5.0], 3.0, 1.58, 1.04, 4.96),\n    # No variation: CI collapse to mean\n    ([5, 5, 5], 5, 0, 5, 5),\n]\nIf any test case fails, pytest will clearly indicate which parameters were used, making debugging straightforward.\n\n\n\nTODO.",
+    "text": "Example: Testing summary_stats()\n\nLet’s say we want to verify that our summary_stats() function works correctly for different datasets.\n\n\n\n\n\n\nNoteView summary_stats()\n\n\n\n\n\n\ndef summary_stats(data):\n    \"\"\"\n    Calculate mean, standard deviation and 95% confidence interval (CI).\n\n    CI is calculated using the t-distribution, which is appropriate for\n    small samples and converges to the normal distribution as the sample\n    size increases.\n\n    Parameters\n    ----------\n    data : pandas.Series\n        Data to use in the calculation.\n\n    Returns\n    -------\n    dict[str, float]\n        A dictionary with keys `mean`, `std_dev`, `ci_lower` and `ci_upper`.\n        Each value is a float, or `numpy.nan` if it can't be computed.\n    \"\"\"\n    # Drop missing values\n    data = data.dropna()\n\n    # Find number of observations\n    count = len(data)\n\n    # If there are no observations, then set all to NaN\n    if count == 0:\n        mean, std_dev, ci_lower, ci_upper = np.nan, np.nan, np.nan, np.nan\n\n    # If there are 1 or 2 observations, can do mean but not other statistics\n    elif count &lt; 3:\n        mean = data.mean()\n        std_dev, ci_lower, ci_upper = np.nan, np.nan, np.nan\n\n    # With more than two observations, can calculate all...\n    else:\n        mean = data.mean()\n        std_dev = data.std()\n\n        # If there is no variation, then CI is equal to the mean\n        if np.var(data) == 0:\n            ci_lower, ci_upper = mean, mean\n        else:\n            # 95% CI based on the t-distribution\n            ci_lower, ci_upper = st.t.interval(\n                confidence=0.95,\n                df=count-1,\n                loc=mean,\n                scale=st.sem(data)\n            )\n\n    return {\n        \"mean\": mean,\n        \"std_dev\": std_dev,\n        \"ci_lower\": ci_lower,\n        \"ci_upper\": ci_upper\n    }\n\n\n\n\nWe will need the following imports in our test script:\n\nimport pandas as pd\nimport pytest\nfrom waitingtimes.patient_analysis import summary_stats\n\nInstead of writing separate test functions for each case, we can use pytest’s @pytest.mark.parametrize decorator:\n\ndef test_summary_stats(\n    data, expected_mean, expected_std, expected_ci_lower, expected_ci_upper\n):\n    \"\"\"Running summary_stats returns expected values.\"\"\"\n    res = summary_stats(pd.Series(data))\n    assert res[\"mean\"] == pytest.approx(expected_mean, rel=5e-3)\n    assert res[\"std_dev\"] == pytest.approx(expected_std, rel=5e-3)\n    assert res[\"ci_lower\"] == pytest.approx(expected_ci_lower, rel=5e-3)\n    assert res[\"ci_upper\"] == pytest.approx(expected_ci_upper, rel=5e-3)\n\n\nHow it works\nThe @pytest.mark.parametrize decorator takes two arguments:\n\nParameter names (as a string). These variable names will be passed to your test function. For example:\n\n\"data, expected_mean, expected_std, expected_ci_lower, expected_ci_upper\"\n\nTest cases (as a list of tuples). Each tuple contains values for one test case. For example:\n\n[\n    # Five value sample with known summary statistics\n    ([1.0, 2.0, 3.0, 4.0, 5.0], 3.0, 1.58, 1.04, 4.96),\n    # No variation: CI collapse to mean\n    ([5, 5, 5], 5, 0, 5, 5),\n]\nIf any test case fails, pytest will clearly indicate which parameters were used, making debugging straightforward.\n\n\nRunning our test\n\n\n\n\n\n\nNoteTest output\n\n\n\n\n\n============================= test session starts ==============================\nplatform linux -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0\nrootdir: /__w/hdruk_tests/hdruk_tests/examples/python_package\nconfigfile: pyproject.toml\ncollected 2 items\n\n../examples/python_package/tests/test_intro_parametrised.py ..           [100%]\n\n============================== 2 passed in 0.01s ===============================\n&lt;ExitCode.OK: 0&gt;\n\n\n\n\n\n\n\nTODO.",
     "crumbs": [
       "Introduction to writing and running tests",
       "Parameterising tests"
@@ -33,6 +33,17 @@
     ]
   },
   {
+    "objectID": "pages/parametrising_tests.html#running-our-test",
+    "href": "pages/parametrising_tests.html#running-our-test",
+    "title": "Parameterising tests",
+    "section": "Running our test",
+    "text": "Running our test\n\n\n\n\n\n\nNoteTest output\n\n\n\n\n\n============================= test session starts ==============================\nplatform linux -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0\nrootdir: /__w/hdruk_tests/hdruk_tests/examples/python_package\nconfigfile: pyproject.toml\ncollected 2 items\n\n../examples/python_package/tests/test_intro_parametrised.py ..           [100%]\n\n============================== 2 passed in 0.01s ===============================\n&lt;ExitCode.OK: 0&gt;",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "Parameterising tests"
+    ]
+  },
+  {
     "objectID": "pages/unit_tests.html",
     "href": "pages/unit_tests.html",
     "title": "Unit tests",
@@ -44,230 +55,58 @@
     ]
   },
   {
-    "objectID": "pages/case_study.html",
-    "href": "pages/case_study.html",
-    "title": "Case study",
-    "section": "",
-    "text": "Choose your language:  \n    Python\n    R\nOur tutorial uses a simple example of importing a small patient dataset and carrying out basic descriptive analysis.\nIn the example we will:",
-    "crumbs": [
-      "Case study"
-    ]
-  },
-  {
-    "objectID": "pages/case_study.html#packages",
-    "href": "pages/case_study.html#packages",
-    "title": "Case study",
-    "section": "Packages",
-    "text": "Packages\n\n\nimport json\nfrom pathlib import Path\n\nimport numpy as np\nimport pandas as pd\nimport scipy.stats as st\n\npd.set_option(\"display.max_columns\", 8)",
-    "crumbs": [
-      "Case study"
-    ]
-  },
-  {
-    "objectID": "pages/case_study.html#import-patient-data",
-    "href": "pages/case_study.html#import-patient-data",
-    "title": "Case study",
-    "section": "Import patient data",
-    "text": "Import patient data\nOur dataset is a small synthetic set of patient-level event times that could come from a healthcare setting (e.g., emergency department, outpatient clinic, doctor’s appointments). Each row records when a patient arrived and when service began.\n\nOur function import_patient_data() reads the data from a CSV file and checks it contains the expected columns, returning a pandas DataFrame.\n\ndef import_patient_data(path):\n    \"\"\"\n    Import raw patient data and check that required columns are present.\n\n    Parameters\n    ----------\n    path : str or pathlib.Path\n        Path to the CSV file containing the patient data.\n\n    Returns\n    -------\n    pandas.DataFrame\n        Dataframe containing the raw patient-level data.\n\n    Raises\n    ------\n    ValueError\n        If the CSV file does not contain exactly the expected columns\n        in the expected order.\n    \"\"\"\n    df = pd.read_csv(Path(path))\n\n    # Expected columns in the raw data (names and order must match)\n    expected = [\n        \"PATIENT_ID\",\n        \"ARRIVAL_DATE\", \"ARRIVAL_TIME\",\n        \"SERVICE_DATE\", \"SERVICE_TIME\"\n    ]\n    if list(df.columns) != expected:\n        raise ValueError(\n            f\"Unexpected columns: {list(df.columns)} (expected {expected})\"\n        )\n\n    return df\n\n\n\n\n\nWe can run this function on our example dataset patient_data.csv.\nYou can download a copy of this data here:\n Download the example patient-level data \n\n\nraw_data = import_patient_data(\"data/patient_data.csv\")\nraw_data\n\n   PATIENT_ID ARRIVAL_DATE  ARRIVAL_TIME SERVICE_DATE  SERVICE_TIME\n0           1   2025-01-01             1   2025-01-01             7\n1           2   2025-01-01             2   2025-01-01             4\n2           3   2025-01-01             3   2025-01-01            10\n3           4   2025-01-01             7   2025-01-01            14\n4           5   2025-01-01            10   2025-01-01            12\n5           6   2025-01-01            10   2025-01-01            11",
-    "crumbs": [
-      "Case study"
-    ]
-  },
-  {
-    "objectID": "pages/case_study.html#calculate-waiting-times",
-    "href": "pages/case_study.html#calculate-waiting-times",
-    "title": "Case study",
-    "section": "Calculate waiting times",
-    "text": "Calculate waiting times\n\nNext, we convert the date and time fields into datetime columns and calculate each patient’s waiting time in minutes.\n\ndef calculate_wait_times(df):\n    \"\"\"\n    Add arrival/service datetimes and waiting time in minutes.\n\n    Parameters\n    ----------\n    df : pandas.DataFrame\n        Patient-level data containing `ARRIVAL_DATE`, `ARRIVAL_TIME`,\n        `SERVICE_DATE`, and `SERVICE_TIME` columns.\n\n    Returns\n    -------\n    pandas.DataFrame\n        Copy of the input DataFrame with additional columns:\n        `arrival_datetime`, `service_datetime`, and `wait_minutes`.\n    \"\"\"\n    df = df.copy()\n\n    # Combine date and time columns into datetime columns\n    for prefix in (\"ARRIVAL\", \"SERVICE\"):\n        df[f\"{prefix.lower()}_datetime\"] = pd.to_datetime(\n            df[f\"{prefix}_DATE\"].astype(str) +\n            \" \" +\n            df[f\"{prefix}_TIME\"].astype(str).str.zfill(4),\n            format=\"%Y-%m-%d %H%M\",\n        )\n\n    # Waiting time in minutes\n    df[\"wait_minutes\"] = (\n        df[\"service_datetime\"] - df[\"arrival_datetime\"]\n    ) / pd.Timedelta(minutes=1)\n\n    return df\n\n\n\n\n\nWe then apply this function to the raw data.\n\n\nprocessed_data = calculate_wait_times(raw_data)\nprocessed_data\n\n   PATIENT_ID ARRIVAL_DATE  ARRIVAL_TIME SERVICE_DATE  SERVICE_TIME  \\\n0           1   2025-01-01             1   2025-01-01             7   \n1           2   2025-01-01             2   2025-01-01             4   \n2           3   2025-01-01             3   2025-01-01            10   \n3           4   2025-01-01             7   2025-01-01            14   \n4           5   2025-01-01            10   2025-01-01            12   \n5           6   2025-01-01            10   2025-01-01            11   \n\n     arrival_datetime    service_datetime  wait_minutes  \n0 2025-01-01 00:01:00 2025-01-01 00:07:00           6.0  \n1 2025-01-01 00:02:00 2025-01-01 00:04:00           2.0  \n2 2025-01-01 00:03:00 2025-01-01 00:10:00           7.0  \n3 2025-01-01 00:07:00 2025-01-01 00:14:00           7.0  \n4 2025-01-01 00:10:00 2025-01-01 00:12:00           2.0  \n5 2025-01-01 00:10:00 2025-01-01 00:11:00           1.0",
-    "crumbs": [
-      "Case study"
-    ]
-  },
-  {
-    "objectID": "pages/case_study.html#calculate-summary-statistics",
-    "href": "pages/case_study.html#calculate-summary-statistics",
-    "title": "Case study",
-    "section": "Calculate summary statistics",
-    "text": "Calculate summary statistics\nFinally, we define a small utility function that calculates the mean, standard deviation, and a 95% confidence interval for a numeric series. The function handles small‑sample edge cases explicitly and uses the t‑distribution, which is appropriate when the sample size is modest.\n\n\ndef summary_stats(data):\n    \"\"\"\n    Calculate mean, standard deviation and 95% confidence interval (CI).\n\n    CI is calculated using the t-distribution, which is appropriate for\n    small samples and converges to the normal distribution as the sample\n    size increases.\n\n    Parameters\n    ----------\n    data : pandas.Series\n        Data to use in the calculation.\n\n    Returns\n    -------\n    dict[str, float]\n        A dictionary with keys `mean`, `std_dev`, `ci_lower` and `ci_upper`.\n        Each value is a float, or `numpy.nan` if it can't be computed.\n    \"\"\"\n    # Drop missing values\n    data = data.dropna()\n\n    # Find number of observations\n    count = len(data)\n\n    # If there are no observations, then set all to NaN\n    if count == 0:\n        mean, std_dev, ci_lower, ci_upper = np.nan, np.nan, np.nan, np.nan\n\n    # If there are 1 or 2 observations, can do mean but not other statistics\n    elif count &lt; 3:\n        mean = data.mean()\n        std_dev, ci_lower, ci_upper = np.nan, np.nan, np.nan\n\n    # With more than two observations, can calculate all...\n    else:\n        mean = data.mean()\n        std_dev = data.std()\n\n        # If there is no variation, then CI is equal to the mean\n        if np.var(data) == 0:\n            ci_lower, ci_upper = mean, mean\n        else:\n            # 95% CI based on the t-distribution\n            ci_lower, ci_upper = st.t.interval(\n                confidence=0.95,\n                df=count-1,\n                loc=mean,\n                scale=st.sem(data)\n            )\n\n    return {\n        \"mean\": mean,\n        \"std_dev\": std_dev,\n        \"ci_lower\": ci_lower,\n        \"ci_upper\": ci_upper\n    }\n\n\n\n\n\nWe apply summary_stats() to the waiting times.\n\n\nresults = summary_stats(processed_data[\"wait_minutes\"])\n\n# Format dictionary for display\nformatted_results = json.dumps(results, indent=4)\nprint(formatted_results)\n\n{\n    \"mean\": 4.166666666666667,\n    \"std_dev\": 2.786873995477131,\n    \"ci_lower\": 1.2420217719136457,\n    \"ci_upper\": 7.091311561419689\n}",
-    "crumbs": [
-      "Case study"
-    ]
-  },
-  {
-    "objectID": "pages/back_tests.html",
-    "href": "pages/back_tests.html",
-    "title": "Back tests",
-    "section": "",
-    "text": "Choose your language:  \n    Python\n    R",
+    "objectID": "pages/unit_tests.html#what-is-a-unit-test",
+    "href": "pages/unit_tests.html#what-is-a-unit-test",
+    "title": "Unit tests",
+    "section": "What is a unit test?",
+    "text": "What is a unit test?\nA unit test checks one small, isolated unit of code - usually a single function or method. Your aim is to check that, for specific inputs, the function behaves exactly as promised.",
     "crumbs": [
       "Types of test",
-      "Back tests"
+      "Unit tests"
     ]
   },
   {
-    "objectID": "pages/test_coverage.html",
-    "href": "pages/test_coverage.html",
-    "title": "Test coverage",
-    "section": "",
-    "text": "Choose your language:  \n    Python\n    R",
-    "crumbs": [
-      "Test coverage"
-    ]
-  },
-  {
-    "objectID": "pages/functional_tests.html",
-    "href": "pages/functional_tests.html",
-    "title": "Functional tests",
-    "section": "",
-    "text": "Choose your language:  \n    Python\n    R",
+    "objectID": "pages/unit_tests.html#example-import_patient_data",
+    "href": "pages/unit_tests.html#example-import_patient_data",
+    "title": "Unit tests",
+    "section": "Example: import_patient_data()",
+    "text": "Example: import_patient_data()\nLet’s use the import_patient_data() function from our case study. We will import it to our test script, alongside other required packages.\n\nimport pandas as pd\nimport pytest\nfrom waitingtimes.patient_analysis import import_patient_data\n\nIts main behaviours are that it:\n\nReads a CSV into a pandas DataFrame.\nRequires the columns to match a specific list exactly (names and order).\nRaises a ValueError if columns are incorrect.\nReturns a DataFrame with raw patient-level data.\n\n\n\n\n\n\n\nNoteView import_patient_data()\n\n\n\n\n\n\ndef import_patient_data(path):\n    \"\"\"\n    Import raw patient data and check that required columns are present.\n\n    Parameters\n    ----------\n    path : str or pathlib.Path\n        Path to the CSV file containing the patient data.\n\n    Returns\n    -------\n    pandas.DataFrame\n        Dataframe containing the raw patient-level data.\n\n    Raises\n    ------\n    ValueError\n        If the CSV file does not contain exactly the expected columns\n        in the expected order.\n    \"\"\"\n    df = pd.read_csv(Path(path))\n\n    # Expected columns in the raw data (names and order must match)\n    expected = [\n        \"PATIENT_ID\",\n        \"ARRIVAL_DATE\", \"ARRIVAL_TIME\",\n        \"SERVICE_DATE\", \"SERVICE_TIME\"\n    ]\n    if list(df.columns) != expected:\n        raise ValueError(\n            f\"Unexpected columns: {list(df.columns)} (expected {expected})\"\n        )\n\n    return df",
     "crumbs": [
       "Types of test",
-      "Functional tests"
+      "Unit tests"
     ]
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Testing in Research Workflows",
-    "section": "",
-    "text": "Testing is an essential part of reproducible and reliable research. This practical course explains how to write and run tests, covering key ideas such as unit and integration testing, test coverage, and automated testing with GitHub Actions. Using hands-on examples in Python and R, you’ll learn how to build tests and include them in your research workflow."
-  },
-  {
-    "objectID": "index.html#about-this-course",
-    "href": "index.html#about-this-course",
-    "title": "Testing in Research Workflows",
-    "section": "",
-    "text": "Testing is an essential part of reproducible and reliable research. This practical course explains how to write and run tests, covering key ideas such as unit and integration testing, test coverage, and automated testing with GitHub Actions. Using hands-on examples in Python and R, you’ll learn how to build tests and include them in your research workflow."
-  },
-  {
-    "objectID": "index.html#instructors",
-    "href": "index.html#instructors",
-    "title": "Testing in Research Workflows",
-    "section": "Instructors",
-    "text": "Instructors\n\n\n\n\n\n\n\n\n\nAmy Heather\nPostdoctoral Research Associate at the University of Exeter\n  ORCID    GitHub    LinkedIn \n\n\n\n\n\n\n\n\n\n\nTom Monks\nAssociate Professor of Health Data Science at the University of Exeter\n  ORCID    GitHub    LinkedIn"
-  },
-  {
-    "objectID": "index.html#funding",
-    "href": "index.html#funding",
-    "title": "Testing in Research Workflows",
-    "section": "Funding",
-    "text": "Funding\nThis course was developed as part of the STARS project. STARS is supported by the Medical Research Council [grant number MR/Z503915/1]."
-  },
-  {
-    "objectID": "pages/write_basic_test.html",
-    "href": "pages/write_basic_test.html",
-    "title": "How to write a basic test",
-    "section": "",
-    "text": "Choose your language:  \n    Python\n    R",
+    "objectID": "pages/unit_tests.html#how-to-write-unit-tests",
+    "href": "pages/unit_tests.html#how-to-write-unit-tests",
+    "title": "Unit tests",
+    "section": "How to write unit tests",
+    "text": "How to write unit tests\n\n\n\n\n1. Start from the docstring\nAlways write docstrings for your functions and classes (see our docstring tutorial if you need guidance).\nYour docstring makes promises about how the function should behave. For import_patient_data(), the docstring promises it will:\n\nAccept str or Path as the path parameter\nReturn a pandas DataFrame\nRaise ValueError if columns are incorrect\n\nEach of these becomes something you can check with a test.\n\n\n2. Define what “success” looks like\nPick the simplest input that should work.\nIn our case, we can create a small CSV with correct columns in the right order and one or two data rows. We can then write tests that confirm:\n\nThe result is a pandas DataFrame.\nThe columns match exactly: list(df.columns) == expected_list\n\n\n\n\n\n\n\nNoteWhy test columns if the function already checks them?\n\n\n\nBecause we are testing the promised behaviour of the function, not just trusting its current implementation.\nIf someone edits the code later and accidentally removes that validation, your test will catch it!\n\n\n\ndef test_import_success(tmp_path):\n    \"\"\"Small CSV with correct columns should work.\"\"\"\n\n    expected_cols = [\n        \"PATIENT_ID\", \"ARRIVAL_DATE\", \"ARRIVAL_TIME\",\n        \"SERVICE_DATE\", \"SERVICE_TIME\",\n    ]\n\n    # Create temporary CSV file\n    df_in = pd.DataFrame(\n        [[\"p1\", \"2024-01-01\", \"08:00\", \"2024-01-01\", \"09:00\"]],\n        columns=expected_cols,\n    )\n    csv_path = tmp_path / \"patients.csv\"\n    df_in.to_csv(csv_path, index=False)\n\n    # Run function and check it looks correct\n    result = import_patient_data(csv_path)\n    assert isinstance(result, pd.DataFrame)\n    assert list(result.columns) == expected_cols\n    pd.testing.assert_frame_equal(result, df_in)\n\n\n\n3. List ways things can go wrong\nNow think: how can inputs break the promises?\nFor import_patient_data(), a ValueError should be raised when we have:\n\nMissing columns\nExtra columns\nCorrect columns but wrong order\n\nFor each case, we can create a small DataFrame which triggers the problem and assert that a ValueError is raised.\n\ndef test_import_errors(tmp_path, columns):\n    \"\"\"Incorrect columns should trigger ValueError.\"\"\"\n\n    # Create temporary CSV file\n    df_in = pd.DataFrame([range(len(columns))], columns=columns)\n    csv_path = tmp_path / \"patients.csv\"\n    df_in.to_csv(csv_path, index=False)\n\n    # Check it raises ValueError\n    with pytest.raises(ValueError):\n        import_patient_data(csv_path)\n\n\n\n4. Consider edge cases\nEdge cases are inputs that are unusual but still realistic.\nFor example, what if the CSV has the correct headers but no data? Should that succeed and return an empty DataFrame, or should it fail?\nIn this case, you might decide that an empty CSV with correct headers is fine and does not raise an error. You may still choose to write a test though, as that makes this decision explicit so other coders know what “correct” means at the edges.\n\ndef test_import_empty_csv(tmp_path):\n    \"\"\"Empty CSV with correct columns should succeed.\"\"\"\n\n    expected_cols = [\n        \"PATIENT_ID\", \"ARRIVAL_DATE\", \"ARRIVAL_TIME\",\n        \"SERVICE_DATE\", \"SERVICE_TIME\",\n    ]\n\n    # Create empty CSV with correct header\n    df_in = pd.DataFrame(columns=expected_cols)\n    csv_path = tmp_path / \"patients.csv\"\n    df_in.to_csv(csv_path, index=False)\n\n    # Should succeed and return empty DataFrame\n    result = import_patient_data(csv_path)\n    assert len(result) == 0\n    assert list(result.columns) == expected_cols\n\n\n\n5. Test all equivalent input forms\nIf the function promises to accept multiple equivalent input types, verify they really are equivalent.\nWith import_patient_data(), we expect a str or Path object to both succeed and return the same DataFrame.\n\ndef test_import_path_types(tmp_path):\n    \"\"\"str and Path inputs should behave identically.\"\"\"\n    # Create temporary CSV file\n    expected_cols = [\n        \"PATIENT_ID\",\n        \"ARRIVAL_DATE\", \"ARRIVAL_TIME\",\n        \"SERVICE_DATE\", \"SERVICE_TIME\",\n    ]\n    df_in = pd.DataFrame(\n        [[\"p1\", \"2024-01-01\", \"08:00\", \"2024-01-01\", \"09:00\"]],\n        columns=expected_cols,\n    )\n    csv_path = tmp_path / \"patients.csv\"\n    df_in.to_csv(csv_path, index=False)\n\n    # Run function with str or Path inputs\n    df_str = import_patient_data(str(csv_path))\n    df_path = import_patient_data(csv_path)\n\n    # Check that results are the same\n    pd.testing.assert_frame_equal(df_str, df_path)",
     "crumbs": [
-      "Introduction to writing and running tests",
-      "How to write a basic test"
+      "Types of test",
+      "Unit tests"
     ]
   },
   {
-    "objectID": "pages/write_basic_test.html#what-is-pytest",
-    "href": "pages/write_basic_test.html#what-is-pytest",
-    "title": "How to write a basic test",
-    "section": "What is pytest?",
-    "text": "What is pytest?\nPytest is a popular framework for testing in Python, widely used in software development and data science.\nYou should install the pytest package into your environment from either conda or PyPI:\nconda install pytest\n# or\npip install pytest",
+    "objectID": "pages/unit_tests.html#running-our-example-tests",
+    "href": "pages/unit_tests.html#running-our-example-tests",
+    "title": "Unit tests",
+    "section": "Running our example tests",
+    "text": "Running our example tests\n\n\n\n\n\n\nNoteTest output\n\n\n\n\n\n============================= test session starts ==============================\nplatform linux -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0\nrootdir: /__w/hdruk_tests/hdruk_tests/examples/python_package\nconfigfile: pyproject.toml\ncollected 6 items\n\n../examples/python_package/tests/test_unit.py ......                     [100%]\n\n============================== 6 passed in 0.03s ===============================\n&lt;ExitCode.OK: 0&gt;",
     "crumbs": [
-      "Introduction to writing and running tests",
-      "How to write a basic test"
+      "Types of test",
+      "Unit tests"
     ]
   },
   {
-    "objectID": "pages/write_basic_test.html#what-a-pytest-test-looks-like",
-    "href": "pages/write_basic_test.html#what-a-pytest-test-looks-like",
-    "title": "How to write a basic test",
-    "section": "What a pytest test looks like",
-    "text": "What a pytest test looks like\nIn pytest, any function whose name starts with test_ is treated as a test. Inside the function you write one or more assert statements. If an assertion fails, pytest will return an error message explaining what went wrong.\n\nimport pytest\n\n\ndef test_example():\n    \"\"\"Simple test confirming 2 + 2 = 4\"\"\"\n    result = 2 + 2\n    assert result == 4",
+    "objectID": "pages/unit_tests.html#when-to-stop-writing-tests",
+    "href": "pages/unit_tests.html#when-to-stop-writing-tests",
+    "title": "Unit tests",
+    "section": "When to stop writing tests",
+    "text": "When to stop writing tests\nYou cannot test everything. You’ve written enough tests when:\n\nEvery promise in the docstring is tested.\nEvery important code branch (like error handling) is tested.\n\nWrite additional tests based on real needs (e.g., bug reports, tricky edge cases in your context), and not by trying to anticipate every theoretical failure.\n\nIn real research projects, you won’t unit test every single function or every possible case. The aim is not perfection, but reasonable confidence in the most important behaviours of your code.",
     "crumbs": [
-      "Introduction to writing and running tests",
-      "How to write a basic test"
-    ]
-  },
-  {
-    "objectID": "pages/write_basic_test.html#testthat",
-    "href": "pages/write_basic_test.html#testthat",
-    "title": "How to write a basic test",
-    "section": "testthat",
-    "text": "testthat\ntestthat is a popular framework for testing in R, widely used in software development and data science.\nYou should install the testthat package into your environment from CRAN.\ninstall.packages(\"testthat\")",
-    "crumbs": [
-      "Introduction to writing and running tests",
-      "How to write a basic test"
-    ]
-  },
-  {
-    "objectID": "pages/write_basic_test.html#what-a-testthat-test-looks-like",
-    "href": "pages/write_basic_test.html#what-a-testthat-test-looks-like",
-    "title": "How to write a basic test",
-    "section": "What a testthat test looks like",
-    "text": "What a testthat test looks like\nTests are created using test_that(). They are built around expectations like expect_true(), expect_false(), expect_equal(), expect_error(), and others (see package index for more).",
-    "crumbs": [
-      "Introduction to writing and running tests",
-      "How to write a basic test"
-    ]
-  },
-  {
-    "objectID": "pages/write_basic_test.html#simple-test-example",
-    "href": "pages/write_basic_test.html#simple-test-example",
-    "title": "How to write a basic test",
-    "section": "Simple test example",
-    "text": "Simple test example\n\nlibrary(testthat)\n\n\ntest_that(\"2 add 2 equals 4\", {\n  result &lt;- 2L + 2L\n  expect_equal(result, 4L)\n})\n\nTest passed with 1 success 😀.",
-    "crumbs": [
-      "Introduction to writing and running tests",
-      "How to write a basic test"
-    ]
-  },
-  {
-    "objectID": "pages/write_basic_test.html#a-simple-test-for-summary_stats",
-    "href": "pages/write_basic_test.html#a-simple-test-for-summary_stats",
-    "title": "How to write a basic test",
-    "section": "A simple test for summary_stats",
-    "text": "A simple test for summary_stats\nHere is a minimal example using the summary_stats function from the case study. For a single value, the function should return that value as the mean and NaN for the other statistics, because there is not enough data to define a standard deviation or confidence interval.\n\n\nimport pandas as pd\nimport pytest\n\n\ndef test_summary_stats_single_value():\n    \"\"\"Running summary_stats on a single value should only return mean.\"\"\"\n    data = pd.Series([10])\n    res = summary_stats(data)\n    assert res[\"mean\"] == 10\n    assert pd.isna(res[\"std_dev\"])\n    assert pd.isna(res[\"ci_lower\"])\n    assert pd.isna(res[\"ci_upper\"])\n\n\n\nTODO.",
-    "crumbs": [
-      "Introduction to writing and running tests",
-      "How to write a basic test"
-    ]
-  },
-  {
-    "objectID": "pages/why_test.html",
-    "href": "pages/why_test.html",
-    "title": "When and why to run tests?",
-    "section": "",
-    "text": "Testing is not unique to software development. It is an essential part of research. Most researchers already test their work informally: they interrogate raw data for issues, scan tables, inspect plots, and check that values fall within plausible ranges.\nFormal testing simply records those expectations in code so they can be run consistently over time, catching issues as they arise rather than months later. Tests ask questions like:\nThis is the same logic you apply when checking results manually, just automated so you can repeat it systematically.",
-    "crumbs": [
-      "When and why to run tests?"
-    ]
-  },
-  {
-    "objectID": "pages/why_test.html#why-tests-matter-in-research-projects",
-    "href": "pages/why_test.html#why-tests-matter-in-research-projects",
-    "title": "When and why to run tests?",
-    "section": "Why tests matter in research projects",
-    "text": "Why tests matter in research projects\nWriting tests pays off because research code and data evolve. When you change your code, introduce new features, or update your data, you risk breaking things that used to work. Tests catch these problems early.\nThey help you verify that:\n\nYour logic and processes are working as you believe they are.\nRecent changes don’t break existing code.\nUpdated datasets are still valid and free from unexpected anomalies.\nYour results remain consistent and reproducible.\n\nOver time, when multiple people work on a project, or when you revisit analyses months later, tests become invaluable. They ensure that re-running your work produces the same results as it did previously, and that anyone depending on your outputs can trust them.\nUltimately, tests are not about best practice. They are about verifying your analysis, so you can trust that your results mean what you think they mean.",
-    "crumbs": [
-      "When and why to run tests?"
-    ]
-  },
-  {
-    "objectID": "pages/why_test.html#when-to-write-tests",
-    "href": "pages/why_test.html#when-to-write-tests",
-    "title": "When and why to run tests?",
-    "section": "When to write tests",
-    "text": "When to write tests\nYou don’t need a finished analysis to start testing. Even a single function or data processing step is worth testing. As you build your analysis, follow a simple pattern:\n\nWrite a piece of code (a function, data processing step, calculation).\nInspect the output to check it looks right.\nTurn that check into a test so you can run it automatically.\nIf you spot a bug, write a test that catches it.\nFix the bug, knowing your test will catch it if it happens again.\n\nThis way, testing becomes part of your natural workflow rather than a separate task.\nAvoiding leaving all testing until the end of your analysis. Problems discovered late are much harder to fix, and you may not fully understand their impact on your results. Testing as you go makes the process feel natural and keeps issues manageable.\n\n\n\n\n\n\nNoteTest-driven development\n\n\n\nSome software engineers write tests before code - this is called “test-driven development”. This can feel less relevant in exploratory academic research, but if it suits your workflow, it is worth trying.",
-    "crumbs": [
-      "When and why to run tests?"
-    ]
-  },
-  {
-    "objectID": "pages/why_test.html#when-to-run-tests",
-    "href": "pages/why_test.html#when-to-run-tests",
-    "title": "When and why to run tests?",
-    "section": "When to run tests",
-    "text": "When to run tests\nRun tests regularly after any code or data changes, as catching errors earlier makes them easier to fix.\nThis practice of re-running tests is called regression testing, and it ensures recent changes haven’t introduced errors.",
-    "crumbs": [
-      "When and why to run tests?"
+      "Types of test",
+      "Unit tests"
     ]
   },
   {
@@ -286,7 +125,7 @@
     "href": "pages/run_tests.html#required-structure-for-running-tests-from-the-command-line",
     "title": "How to run tests",
     "section": "Required structure for running tests from the command line",
-    "text": "Required structure for running tests from the command line\nThis approach works when you have:\n\n1. Test files that import your analysis code\nYour test files need to import the functions, classes, or modules you want to test. This can be done in several ways depending on your project structure:\n# If your code is packaged\nfrom waitingtimes.patient_analysis import summary_stats\n\n# If your code is in a local file in the same directory\nfrom patient_analysis import summary_stats\n\n# If your code is in a subdirectory\nfrom src.analysis import summary_stats\n\n\n2. Test files that following the test_ naming convention\nPytest automatically discovers and runs tests when your test files start with test_. It is also typical (but not mandatory) to store test files in a folder called tests/. For example:\ntests/\n├── test_back.py\n├── test_functional.py\n└── test_unit.py",
+    "text": "Required structure for running tests from the command line\nThis approach works when you have:\n\n1. Test files that import your analysis code\nYour test files need to import the functions, classes, or modules you want to test. This can be done in several ways depending on your project structure:\n# If your code is packaged\nfrom waitingtimes.patient_analysis import summary_stats\n\n# If your code is in a local file in the same directory\nfrom patient_analysis import summary_stats\n\n# If your code is in a subdirectory\nfrom src.analysis import summary_stats\n\n\n2. Test files following the test_ naming convention\nPytest automatically discovers and runs tests when your test files start with test_. It is also typical (but not mandatory) to store test files in a folder called tests/. For example:\ntests/\n├── test_back.py\n├── test_functional.py\n└── test_unit.py",
     "crumbs": [
       "Introduction to writing and running tests",
       "How to run tests"
@@ -334,6 +173,404 @@
     "crumbs": [
       "Introduction to writing and running tests",
       "How to run tests"
+    ]
+  },
+  {
+    "objectID": "pages/why_test.html",
+    "href": "pages/why_test.html",
+    "title": "When and why to run tests?",
+    "section": "",
+    "text": "Testing is not unique to software development. It is an essential part of research. Most researchers already test their work informally: they interrogate raw data for issues, scan tables, inspect plots, and check that values fall within plausible ranges.\nFormal testing simply records those expectations in code so they can be run consistently over time, catching issues as they arise rather than months later. Tests ask questions like:\nThis is the same logic you apply when checking results manually, just automated so you can repeat it systematically.",
+    "crumbs": [
+      "When and why to run tests?"
+    ]
+  },
+  {
+    "objectID": "pages/why_test.html#why-tests-matter-in-research-projects",
+    "href": "pages/why_test.html#why-tests-matter-in-research-projects",
+    "title": "When and why to run tests?",
+    "section": "Why tests matter in research projects",
+    "text": "Why tests matter in research projects\nWriting tests pays off because research code and data evolve. When you change your code, introduce new features, or update your data, you risk breaking things that used to work. Tests catch these problems early.\nThey help you verify that:\n\nYour logic and processes are working as you believe they are.\nRecent changes don’t break existing code.\nUpdated datasets are still valid and free from unexpected anomalies.\nYour results remain consistent and reproducible.\n\nOver time, when multiple people work on a project, or when you revisit analyses months later, tests become invaluable. They ensure that re-running your work produces the same results as it did previously, and that anyone depending on your outputs can trust them.\nUltimately, tests are not about best practice. They are about verifying your analysis, so you can trust that your results mean what you think they mean.",
+    "crumbs": [
+      "When and why to run tests?"
+    ]
+  },
+  {
+    "objectID": "pages/why_test.html#when-to-write-tests",
+    "href": "pages/why_test.html#when-to-write-tests",
+    "title": "When and why to run tests?",
+    "section": "When to write tests",
+    "text": "When to write tests\nYou don’t need a finished analysis to start testing. Even a single function or data processing step is worth testing. As you build your analysis, follow a simple pattern:\n\nWrite a piece of code (a function, data processing step, calculation).\nInspect the output to check it looks right.\nTurn that check into a test so you can run it automatically.\nIf you spot a bug, write a test that catches it.\nFix the bug, knowing your test will catch it if it happens again.\n\nThis way, testing becomes part of your natural workflow rather than a separate task.\nAvoiding leaving all testing until the end of your analysis. Problems discovered late are much harder to fix, and you may not fully understand their impact on your results. Testing as you go makes the process feel natural and keeps issues manageable.\n\n\n\n\n\n\nNoteTest-driven development\n\n\n\nSome software engineers write tests before code - this is called “test-driven development”. This can feel less relevant in exploratory academic research, but if it suits your workflow, it is worth trying.",
+    "crumbs": [
+      "When and why to run tests?"
+    ]
+  },
+  {
+    "objectID": "pages/why_test.html#when-to-run-tests",
+    "href": "pages/why_test.html#when-to-run-tests",
+    "title": "When and why to run tests?",
+    "section": "When to run tests",
+    "text": "When to run tests\nRun tests regularly after any code or data changes, as catching errors earlier makes them easier to fix.\nThis practice of re-running tests is called regression testing, and it ensures recent changes haven’t introduced errors.",
+    "crumbs": [
+      "When and why to run tests?"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html",
+    "href": "pages/write_basic_test.html",
+    "title": "How to write a basic test",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#what-is-pytest",
+    "href": "pages/write_basic_test.html#what-is-pytest",
+    "title": "How to write a basic test",
+    "section": "What is pytest?",
+    "text": "What is pytest?\nPytest is a popular framework for testing in Python, widely used in software development and data science.\nYou should install the pytest package into your environment from either conda or PyPI:\nconda install pytest\n# or\npip install pytest",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#what-a-pytest-test-looks-like",
+    "href": "pages/write_basic_test.html#what-a-pytest-test-looks-like",
+    "title": "How to write a basic test",
+    "section": "What a pytest test looks like",
+    "text": "What a pytest test looks like\nIn pytest, any function whose name starts with test_ is treated as a test. Inside the function you write one or more assert statements. If an assertion fails, pytest will return an error message explaining what went wrong.\nFor example:\n\nimport pytest\n\n\ndef test_example():\n    \"\"\"Simple test confirming 2 + 2 = 4\"\"\"\n    result = 2 + 2\n    assert result == 4",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#testthat",
+    "href": "pages/write_basic_test.html#testthat",
+    "title": "How to write a basic test",
+    "section": "testthat",
+    "text": "testthat\ntestthat is a popular framework for testing in R, widely used in software development and data science.\nYou should install the testthat package into your environment from CRAN.\ninstall.packages(\"testthat\")",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#what-a-testthat-test-looks-like",
+    "href": "pages/write_basic_test.html#what-a-testthat-test-looks-like",
+    "title": "How to write a basic test",
+    "section": "What a testthat test looks like",
+    "text": "What a testthat test looks like\nTests are created using test_that(). They are built around expectations like expect_true(), expect_false(), expect_equal(), expect_error(), and others (see package index for more).",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#simple-test-example",
+    "href": "pages/write_basic_test.html#simple-test-example",
+    "title": "How to write a basic test",
+    "section": "Simple test example",
+    "text": "Simple test example\n\nlibrary(testthat)\n\n\ntest_that(\"2 add 2 equals 4\", {\n  result &lt;- 2L + 2L\n  expect_equal(result, 4L)\n})\n\nTest passed with 1 success 🎉.",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "pages/write_basic_test.html#a-simple-test-for-summary_stats",
+    "href": "pages/write_basic_test.html#a-simple-test-for-summary_stats",
+    "title": "How to write a basic test",
+    "section": "A simple test for summary_stats",
+    "text": "A simple test for summary_stats\nHere is a minimal example using the summary_stats function from the case study.\n\n\n\n\n\n\n\nNoteView summary_stats()\n\n\n\n\n\n\ndef summary_stats(data):\n    \"\"\"\n    Calculate mean, standard deviation and 95% confidence interval (CI).\n\n    CI is calculated using the t-distribution, which is appropriate for\n    small samples and converges to the normal distribution as the sample\n    size increases.\n\n    Parameters\n    ----------\n    data : pandas.Series\n        Data to use in the calculation.\n\n    Returns\n    -------\n    dict[str, float]\n        A dictionary with keys `mean`, `std_dev`, `ci_lower` and `ci_upper`.\n        Each value is a float, or `numpy.nan` if it can't be computed.\n    \"\"\"\n    # Drop missing values\n    data = data.dropna()\n\n    # Find number of observations\n    count = len(data)\n\n    # If there are no observations, then set all to NaN\n    if count == 0:\n        mean, std_dev, ci_lower, ci_upper = np.nan, np.nan, np.nan, np.nan\n\n    # If there are 1 or 2 observations, can do mean but not other statistics\n    elif count &lt; 3:\n        mean = data.mean()\n        std_dev, ci_lower, ci_upper = np.nan, np.nan, np.nan\n\n    # With more than two observations, can calculate all...\n    else:\n        mean = data.mean()\n        std_dev = data.std()\n\n        # If there is no variation, then CI is equal to the mean\n        if np.var(data) == 0:\n            ci_lower, ci_upper = mean, mean\n        else:\n            # 95% CI based on the t-distribution\n            ci_lower, ci_upper = st.t.interval(\n                confidence=0.95,\n                df=count-1,\n                loc=mean,\n                scale=st.sem(data)\n            )\n\n    return {\n        \"mean\": mean,\n        \"std_dev\": std_dev,\n        \"ci_lower\": ci_lower,\n        \"ci_upper\": ci_upper\n    }\n\n\n\n\n\nFor a single value, the function should return that value as the mean and NaN for the other statistics, because there is not enough data to define a standard deviation or confidence interval.\n\n\nimport pandas as pd\nfrom waitingtimes.patient_analysis import summary_stats\n\n\ndef test_summary_stats_single_value():\n    \"\"\"Running summary_stats on a single value should only return mean.\"\"\"\n    data = pd.Series([10])\n    res = summary_stats(data)\n    assert res[\"mean\"] == 10\n    assert pd.isna(res[\"std_dev\"])\n    assert pd.isna(res[\"ci_lower\"])\n    assert pd.isna(res[\"ci_upper\"])\n\n\n\nTODO.",
+    "crumbs": [
+      "Introduction to writing and running tests",
+      "How to write a basic test"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Testing in Research Workflows",
+    "section": "",
+    "text": "Testing is an essential part of reproducible and reliable research. This practical course explains how to write and run tests, covering key ideas such as unit and integration testing, test coverage, and automated testing with GitHub Actions. Using hands-on examples in Python and R, you’ll learn how to build tests and include them in your research workflow."
+  },
+  {
+    "objectID": "index.html#about-this-course",
+    "href": "index.html#about-this-course",
+    "title": "Testing in Research Workflows",
+    "section": "",
+    "text": "Testing is an essential part of reproducible and reliable research. This practical course explains how to write and run tests, covering key ideas such as unit and integration testing, test coverage, and automated testing with GitHub Actions. Using hands-on examples in Python and R, you’ll learn how to build tests and include them in your research workflow."
+  },
+  {
+    "objectID": "index.html#instructors",
+    "href": "index.html#instructors",
+    "title": "Testing in Research Workflows",
+    "section": "Instructors",
+    "text": "Instructors\n\n\n\n\n\n\n\n\n\nAmy Heather\nPostdoctoral Research Associate at the University of Exeter\n  ORCID    GitHub    LinkedIn \n\n\n\n\n\n\n\n\n\n\nTom Monks\nAssociate Professor of Health Data Science at the University of Exeter\n  ORCID    GitHub    LinkedIn"
+  },
+  {
+    "objectID": "index.html#funding",
+    "href": "index.html#funding",
+    "title": "Testing in Research Workflows",
+    "section": "Funding",
+    "text": "Funding\nThis course was developed as part of the STARS project. STARS is supported by the Medical Research Council [grant number MR/Z503915/1]."
+  },
+  {
+    "objectID": "CONTRIBUTING.html",
+    "href": "CONTRIBUTING.html",
+    "title": "Contributing",
+    "section": "",
+    "text": "This file is for contributors. It describes how the hdruk_tests site is set-up and quality controlled.\n\n\nThe example code is contained in examples/python_package/.\nWe want to be able to show individual functions without imports in the quarto website, so we have a script tools/extract_snippets.py which extracts each function without imports into individual .py files within pages/code/.\nThis is run each time the site is built via Quarto’s pre-render hook.\n\n\n\nThe site is hosted on GitHub pages and rendered via GitHub actions. It uses a Docker environment which has the Python and R requirements.\nIf you wish to render it locally, please refer to the environment.yaml and renv.lock files.\n\n\nWhen rendering a Quarto document containing executable python code with reticulate, you might encounter:\nError in `use_condaenv()`:\n! Unable to locate conda environment 'des-rap-book'.\nBacktrace:\n    ▆\n 1. └─reticulate::use_condaenv(\"des-rap-book\", required = TRUE)\nThis can occur when multiple Conda or Mamba installations exist (e.g. mambgaforge, miniconda3), or if R is using a different search path than the shell. By default, reticulate only looks in one location for environments, which can cause problems when environments are not where reticulate expects.\nTo fix this, set the RETICULATE_CONDA environment variable to the correct Conda or Mamba executable. To find the path to your executable, run:\nconda env list\nLook for your environment in the list. For example, if your environment is at /home/amy/mambaforge/envs/des-rap-book, then your Conda executable is likely at /home/amy/mambaforge/bin/conda.\nSet the environment variable like so:\nexport RETICULATE_CONDA=/home/amy/mambaforge/bin/conda\nNow render your book:\nquarto render\nTo avoid needing to set RETICULATE_CONDA every time you open a new terminal, add the export command to an .Renviron file in your project directory. This file is not tracked by Git, and is specific to you. Create the file and add:\nRETICULATE_CONDA=/home/amy/mambaforge/bin/conda"
+  },
+  {
+    "objectID": "CONTRIBUTING.html#example-code",
+    "href": "CONTRIBUTING.html#example-code",
+    "title": "Contributing",
+    "section": "",
+    "text": "The example code is contained in examples/python_package/.\nWe want to be able to show individual functions without imports in the quarto website, so we have a script tools/extract_snippets.py which extracts each function without imports into individual .py files within pages/code/.\nThis is run each time the site is built via Quarto’s pre-render hook."
+  },
+  {
+    "objectID": "CONTRIBUTING.html#rendering-the-quarto-site",
+    "href": "CONTRIBUTING.html#rendering-the-quarto-site",
+    "title": "Contributing",
+    "section": "",
+    "text": "The site is hosted on GitHub pages and rendered via GitHub actions. It uses a Docker environment which has the Python and R requirements.\nIf you wish to render it locally, please refer to the environment.yaml and renv.lock files.\n\n\nWhen rendering a Quarto document containing executable python code with reticulate, you might encounter:\nError in `use_condaenv()`:\n! Unable to locate conda environment 'des-rap-book'.\nBacktrace:\n    ▆\n 1. └─reticulate::use_condaenv(\"des-rap-book\", required = TRUE)\nThis can occur when multiple Conda or Mamba installations exist (e.g. mambgaforge, miniconda3), or if R is using a different search path than the shell. By default, reticulate only looks in one location for environments, which can cause problems when environments are not where reticulate expects.\nTo fix this, set the RETICULATE_CONDA environment variable to the correct Conda or Mamba executable. To find the path to your executable, run:\nconda env list\nLook for your environment in the list. For example, if your environment is at /home/amy/mambaforge/envs/des-rap-book, then your Conda executable is likely at /home/amy/mambaforge/bin/conda.\nSet the environment variable like so:\nexport RETICULATE_CONDA=/home/amy/mambaforge/bin/conda\nNow render your book:\nquarto render\nTo avoid needing to set RETICULATE_CONDA every time you open a new terminal, add the export command to an .Renviron file in your project directory. This file is not tracked by Git, and is specific to you. Create the file and add:\nRETICULATE_CONDA=/home/amy/mambaforge/bin/conda"
+  },
+  {
+    "objectID": "pages/functional_tests.html",
+    "href": "pages/functional_tests.html",
+    "title": "Functional tests",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R",
+    "crumbs": [
+      "Types of test",
+      "Functional tests"
+    ]
+  },
+  {
+    "objectID": "pages/functional_tests.html#what-is-a-functional-test",
+    "href": "pages/functional_tests.html#what-is-a-functional-test",
+    "title": "Functional tests",
+    "section": "What is a functional test?",
+    "text": "What is a functional test?\nFunctional tests are broader than unit tests. They focus on a whole feature or workflow, often involving several functions or classes working together. They check whether this end-to-end behaviour gives the correct outputs for given inputs, matching our requirements or expected results.",
+    "crumbs": [
+      "Types of test",
+      "Functional tests"
+    ]
+  },
+  {
+    "objectID": "pages/functional_tests.html#example-waiting-times-case-study",
+    "href": "pages/functional_tests.html#example-waiting-times-case-study",
+    "title": "Functional tests",
+    "section": "Example: waiting times case study",
+    "text": "Example: waiting times case study\nWe will return to our waiting times case study which involved three functions:\n\nimport_patient_data() - imports raw patient data and checks that the required columns are present.\ncalculate_wait_times - adds arrival and service datetimes, and waiting time in minutes.\nsummary_stats - calculates mean, standard deviation and 95% confidence interval.\n\nUnlike unit tests, which check each function in isolation, functional tests run all three steps together and verify the end-to-end workflow produces correct results.\nWe will need the follow imports in our test script:\n\nimport numpy as np\nimport pandas as pd\nimport pytest\nfrom waitingtimes.patient_analysis import (\n    import_patient_data, calculate_wait_times, summary_stats\n)",
+    "crumbs": [
+      "Types of test",
+      "Functional tests"
+    ]
+  },
+  {
+    "objectID": "pages/functional_tests.html#how-to-write-functional-tests",
+    "href": "pages/functional_tests.html#how-to-write-functional-tests",
+    "title": "Functional tests",
+    "section": "How to write functional tests",
+    "text": "How to write functional tests\n\n1. Identify the feature or workflow to test\nStart by choosing the complete feature or workflow you want to validate.\nIn our case study, we only have a simple three-step pipeline - but more complex projects may have multiple intersecting workflows you want to focus on.\n\n\n2. Define inputs and expected outputs\nThink about realistic scenarios that cover:\n\nSuccess cases: standard inputs where everything should work correctly.\nVariations: realistic variations in the inputs (e.g., different sample sizes, different distributions in the data input).\nEdge cases: unusual but plausible inputs (e.g., unusual sample sizes, boundary values).\nError cases: invalid inputs that should trigger errors.\n\n\n\n3. Write tests for these scenarios\n\nSuccess case: typical data\nThis test confirms the workflow succeeds with standard inputs and produces correct summary statistics.\n\ndef test_workflow_success(tmp_path):\n    \"\"\"Complete workflow should calculate correct wait statistics.\"\"\"\n\n    # Create test data with known values\n    test_data = pd.DataFrame({\n        \"PATIENT_ID\": [\"p1\", \"p2\", \"p3\"],\n        \"ARRIVAL_DATE\": [\"2024-01-01\", \"2024-01-01\", \"2024-01-02\"],\n        \"ARRIVAL_TIME\": [\"0800\", \"0930\", \"1015\"],\n        \"SERVICE_DATE\": [\"2024-01-01\", \"2024-01-01\", \"2024-01-02\"],\n        \"SERVICE_TIME\": [\"0830\", \"1000\", \"1045\"],\n    })\n\n    # Write test CSV\n    csv_path = tmp_path / \"patients.csv\"\n    test_data.to_csv(csv_path, index=False)\n\n    # Run complete workflow\n    df = import_patient_data(csv_path)\n    df = calculate_wait_times(df)\n    stats = summary_stats(df[\"waittime\"])\n\n    # Verify the workflow produces correct results\n    # Expected wait times: 30, 30, 30 minutes\n    assert stats[\"mean\"] == 30.0\n    assert stats[\"std_dev\"] == 0.0\n    assert stats[\"ci_lower\"] == 30.0\n    assert stats[\"ci_upper\"] == 30.0\n\n\n\nVariation: data with different distributions\nThis test confirms the workflow handles realistic variation in wait times.\n\ndef test_workflow_with_variation(tmp_path):\n    \"\"\"Workflow should correctly compute statistics for variable wait times.\"\"\"\n\n    # Create test data with known wait times: 15, 30, 45 minutes\n    test_data = pd.DataFrame({\n        \"PATIENT_ID\": [\"p1\", \"p2\", \"p3\"],\n        \"ARRIVAL_DATE\": [\"2024-01-01\", \"2024-01-01\", \"2024-01-01\"],\n        \"ARRIVAL_TIME\": [\"0800\", \"0900\", \"1000\"],\n        \"SERVICE_DATE\": [\"2024-01-01\", \"2024-01-01\", \"2024-01-01\"],\n        \"SERVICE_TIME\": [\"0815\", \"0930\", \"1045\"],\n    })\n\n    csv_path = tmp_path / \"patients.csv\"\n    test_data.to_csv(csv_path, index=False)\n\n    # Run complete workflow\n    df = import_patient_data(csv_path)\n    df = calculate_wait_times(df)\n    stats = summary_stats(df[\"waittime\"])\n\n    # Verify mean and standard deviation\n    assert stats[\"mean\"] == 30\n    assert np.isclose(stats[\"std_dev\"], 15)\n\n    # CI should be symmetric around mean for this small sample\n    assert stats[\"ci_lower\"] &lt; stats[\"mean\"] &lt; stats[\"ci_upper\"]\n\n\n\nError case: invalid input data\nThis test confirms the workflow fails appropriately when given invalid data.\n\ndef test_missing_date_error(tmp_path):\n    \"\"\"Workflow should raise error when dates are missing.\"\"\"\n\n    test_data = pd.DataFrame({\n        \"PATIENT_ID\": [\"p1\", \"p2\", \"p3\"],\n        \"ARRIVAL_DATE\": [\"2024-01-01\", \"2024-01-01\", \"2024-01-01\"],\n        \"ARRIVAL_TIME\": [\"0800\", \"0900\", \"1000\"],\n        \"SERVICE_DATE\": [\"2024-01-01\", pd.NaT, \"2024-01-01\"],\n        \"SERVICE_TIME\": [\"0830\", \"1000\", \"1045\"],\n    })\n\n    csv_path = tmp_path / \"patients.csv\"\n    test_data.to_csv(csv_path, index=False)\n\n    # Workflow should fail when calculating wait times with missing dates\n    df = import_patient_data(csv_path)\n    with pytest.raises(ValueError, match=\"time data\"):\n        df = calculate_wait_times(df)",
+    "crumbs": [
+      "Types of test",
+      "Functional tests"
+    ]
+  },
+  {
+    "objectID": "pages/functional_tests.html#running-our-example-tests",
+    "href": "pages/functional_tests.html#running-our-example-tests",
+    "title": "Functional tests",
+    "section": "Running our example tests",
+    "text": "Running our example tests\n\n\n\n\n\n\nNoteTest output\n\n\n\n\n\n============================= test session starts ==============================\nplatform linux -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0\nrootdir: /__w/hdruk_tests/hdruk_tests/examples/python_package\nconfigfile: pyproject.toml\ncollected 3 items\n\n../examples/python_package/tests/test_functional.py ...                  [100%]\n\n============================== 3 passed in 0.03s ===============================\n&lt;ExitCode.OK: 0&gt;",
+    "crumbs": [
+      "Types of test",
+      "Functional tests"
+    ]
+  },
+  {
+    "objectID": "pages/functional_tests.html#when-to-stop-writing-tests",
+    "href": "pages/functional_tests.html#when-to-stop-writing-tests",
+    "title": "Functional tests",
+    "section": "When to stop writing tests",
+    "text": "When to stop writing tests\nYou cannot test everything. You’ve written enough tests when:\n\nCritical workflows are covered with at least one success case.\nImport variations and edge cases are tested.\nKey error conditions are verified.\n\nFocus your testing effort on workflows that matter to your research and scenarios you’re likely to encounter in practice. You’re building confidence in your code, not trying to test every theoretical possibility.",
+    "crumbs": [
+      "Types of test",
+      "Functional tests"
+    ]
+  },
+  {
+    "objectID": "pages/test_coverage.html",
+    "href": "pages/test_coverage.html",
+    "title": "Test coverage",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R",
+    "crumbs": [
+      "Test coverage"
+    ]
+  },
+  {
+    "objectID": "pages/back_tests.html",
+    "href": "pages/back_tests.html",
+    "title": "Back tests",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R",
+    "crumbs": [
+      "Types of test",
+      "Back tests"
+    ]
+  },
+  {
+    "objectID": "pages/back_tests.html#what-is-a-back-test",
+    "href": "pages/back_tests.html#what-is-a-back-test",
+    "title": "Back tests",
+    "section": "What is a back test?",
+    "text": "What is a back test?\nA back test involves running your workflow on historical data and confirming that results are consistent over time.\nIt’s not focused on whether results are theoretically correct. It’s about consistency and reproducibility - confirming that code changes, environment updates, or data pipeline tweaks have not silently changed results.\nThis overlaps with functional testing, but is distinct, because functional tests ask “is this output correct” whereas back tests ask “is this output the same as before?”.",
+    "crumbs": [
+      "Types of test",
+      "Back tests"
+    ]
+  },
+  {
+    "objectID": "pages/back_tests.html#example-waiting-times-case-study",
+    "href": "pages/back_tests.html#example-waiting-times-case-study",
+    "title": "Back tests",
+    "section": "Example: waiting times case study",
+    "text": "Example: waiting times case study\nWe will run back tests using the dataset we introduced for our waiting times case study.\nOn the test page, we need to import:\n\nfrom pathlib import Path\nimport numpy as np\nfrom waitingtimes.patient_analysis import (\n    import_patient_data, calculate_wait_times, summary_stats\n)",
+    "crumbs": [
+      "Types of test",
+      "Back tests"
+    ]
+  },
+  {
+    "objectID": "pages/back_tests.html#back-test",
+    "href": "pages/back_tests.html#back-test",
+    "title": "Back tests",
+    "section": "Back test",
+    "text": "Back test\n\ndef test_reproduction():\n    \"\"\"Re-running on historical data should produce consistent results.\"\"\"\n    # Specify path to historical data\n    csv_path = Path(__file__).parent.joinpath(\"data/patient_data.csv\")\n\n    # Run functions\n    df = import_patient_data(csv_path)\n    df = calculate_wait_times(df)\n    stats = summary_stats(df[\"waittime\"])\n\n    # Verify the workflow produces consistent results\n    assert np.isclose(stats[\"mean\"], 4.1666, rtol=0.0001)\n    assert np.isclose(stats[\"std_dev\"], 2.7869, rtol=0.0001)\n    assert np.isclose(stats[\"ci_lower\"], 1.2420, rtol=0.0001)\n    assert np.isclose(stats[\"ci_upper\"], 7.0913, rtol=0.0001)",
+    "crumbs": [
+      "Types of test",
+      "Back tests"
+    ]
+  },
+  {
+    "objectID": "pages/back_tests.html#running-our-example-test",
+    "href": "pages/back_tests.html#running-our-example-test",
+    "title": "Back tests",
+    "section": "Running our example test",
+    "text": "Running our example test\n\n\n\n\n\n\nNoteTest output\n\n\n\n\n\n============================= test session starts ==============================\nplatform linux -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0\nrootdir: /__w/hdruk_tests/hdruk_tests/examples/python_package\nconfigfile: pyproject.toml\ncollected 1 item\n\n../examples/python_package/tests/test_back.py .                          [100%]\n\n============================== 1 passed in 0.02s ===============================\n&lt;ExitCode.OK: 0&gt;",
+    "crumbs": [
+      "Types of test",
+      "Back tests"
+    ]
+  },
+  {
+    "objectID": "pages/back_tests.html#when-should-you-update-your-back-tests",
+    "href": "pages/back_tests.html#when-should-you-update-your-back-tests",
+    "title": "Back tests",
+    "section": "When should you update your back tests?",
+    "text": "When should you update your back tests?\nErrors: If you identify an error in your pipeline, you first fix the code and then deliberately update the back test in isolation, so you know the only change in behaviour is the error fix and not something unintended elsewhere.\nChanges over time: As your research evolves, you may update the workflow (e.g., improve the wait time calculation method) or use more recent datasets. You can keep the old back test running alongside new ones - this verifies that changes to the workflow don’t accidentally alter results on historical data, while new back tests validate that updated methods work correctly on current data.",
+    "crumbs": [
+      "Types of test",
+      "Back tests"
+    ]
+  },
+  {
+    "objectID": "pages/case_study.html",
+    "href": "pages/case_study.html",
+    "title": "Case study",
+    "section": "",
+    "text": "Choose your language:  \n    Python\n    R\nOur tutorial uses a simple example of importing a small patient dataset and carrying out basic descriptive analysis.\nIn the example we will:",
+    "crumbs": [
+      "Case study"
+    ]
+  },
+  {
+    "objectID": "pages/case_study.html#packages",
+    "href": "pages/case_study.html#packages",
+    "title": "Case study",
+    "section": "Packages",
+    "text": "Packages\n\n\n\nimport json\nfrom pathlib import Path\n\nimport numpy as np\nimport pandas as pd\nimport scipy.stats as st\n\npd.set_option(\"display.max_columns\", 8)",
+    "crumbs": [
+      "Case study"
+    ]
+  },
+  {
+    "objectID": "pages/case_study.html#import-patient-data",
+    "href": "pages/case_study.html#import-patient-data",
+    "title": "Case study",
+    "section": "Import patient data",
+    "text": "Import patient data\nOur dataset is a small synthetic set of patient-level event times that could come from a healthcare setting (e.g., emergency department, outpatient clinic, doctor’s appointments). Each row records when a patient arrived and when service began.\n\nOur function import_patient_data() reads the data from a CSV file and checks it contains the expected columns, returning a pandas DataFrame.\n\ndef import_patient_data(path):\n    \"\"\"\n    Import raw patient data and check that required columns are present.\n\n    Parameters\n    ----------\n    path : str or pathlib.Path\n        Path to the CSV file containing the patient data.\n\n    Returns\n    -------\n    pandas.DataFrame\n        Dataframe containing the raw patient-level data.\n\n    Raises\n    ------\n    ValueError\n        If the CSV file does not contain exactly the expected columns\n        in the expected order.\n    \"\"\"\n    df = pd.read_csv(Path(path))\n\n    # Expected columns in the raw data (names and order must match)\n    expected = [\n        \"PATIENT_ID\",\n        \"ARRIVAL_DATE\", \"ARRIVAL_TIME\",\n        \"SERVICE_DATE\", \"SERVICE_TIME\"\n    ]\n    if list(df.columns) != expected:\n        raise ValueError(\n            f\"Unexpected columns: {list(df.columns)} (expected {expected})\"\n        )\n\n    return df\n\n\n\n\n\nWe can run this function on our example dataset patient_data.csv.\nYou can download a copy of this data here:\n Download the example patient-level data \n\n\nraw_data = import_patient_data(\n   \"../examples/python_package/data/patient_data.csv\"\n)\nraw_data\n\n   PATIENT_ID ARRIVAL_DATE  ARRIVAL_TIME SERVICE_DATE  SERVICE_TIME\n0           1   2025-01-01             1   2025-01-01             7\n1           2   2025-01-01             2   2025-01-01             4\n2           3   2025-01-01             3   2025-01-01            10\n3           4   2025-01-01             7   2025-01-01            14\n4           5   2025-01-01            10   2025-01-01            12\n5           6   2025-01-01            10   2025-01-01            11",
+    "crumbs": [
+      "Case study"
+    ]
+  },
+  {
+    "objectID": "pages/case_study.html#calculate-waiting-times",
+    "href": "pages/case_study.html#calculate-waiting-times",
+    "title": "Case study",
+    "section": "Calculate waiting times",
+    "text": "Calculate waiting times\n\nNext, we convert the date and time fields into datetime columns and calculate each patient’s waiting time in minutes.\n\ndef calculate_wait_times(df):\n    \"\"\"\n    Add arrival/service datetimes and waiting time in minutes.\n\n    Parameters\n    ----------\n    df : pandas.DataFrame\n        Patient-level data containing `ARRIVAL_DATE`, `ARRIVAL_TIME`,\n        `SERVICE_DATE`, and `SERVICE_TIME` columns.\n\n    Returns\n    -------\n    pandas.DataFrame\n        Copy of the input DataFrame with additional columns:\n        `arrival_datetime`, `service_datetime`, and `waittime`.\n    \"\"\"\n    df = df.copy()\n\n    # Combine date and time columns into datetime columns\n    for prefix in (\"ARRIVAL\", \"SERVICE\"):\n        df[f\"{prefix.lower()}_datetime\"] = pd.to_datetime(\n            df[f\"{prefix}_DATE\"].astype(str) +\n            \" \" +\n            df[f\"{prefix}_TIME\"].astype(str).str.zfill(4),\n            format=\"%Y-%m-%d %H%M\"\n        )\n\n    # Waiting time in minutes\n    df[\"waittime\"] = (\n        df[\"service_datetime\"] - df[\"arrival_datetime\"]\n    ) / pd.Timedelta(minutes=1)\n\n    return df\n\n\n\n\n\nWe then apply this function to the raw data.\n\n\nprocessed_data = calculate_wait_times(raw_data)\nprocessed_data\n\n   PATIENT_ID ARRIVAL_DATE  ARRIVAL_TIME SERVICE_DATE  SERVICE_TIME  \\\n0           1   2025-01-01             1   2025-01-01             7   \n1           2   2025-01-01             2   2025-01-01             4   \n2           3   2025-01-01             3   2025-01-01            10   \n3           4   2025-01-01             7   2025-01-01            14   \n4           5   2025-01-01            10   2025-01-01            12   \n5           6   2025-01-01            10   2025-01-01            11   \n\n     arrival_datetime    service_datetime  waittime  \n0 2025-01-01 00:01:00 2025-01-01 00:07:00       6.0  \n1 2025-01-01 00:02:00 2025-01-01 00:04:00       2.0  \n2 2025-01-01 00:03:00 2025-01-01 00:10:00       7.0  \n3 2025-01-01 00:07:00 2025-01-01 00:14:00       7.0  \n4 2025-01-01 00:10:00 2025-01-01 00:12:00       2.0  \n5 2025-01-01 00:10:00 2025-01-01 00:11:00       1.0",
+    "crumbs": [
+      "Case study"
+    ]
+  },
+  {
+    "objectID": "pages/case_study.html#calculate-summary-statistics",
+    "href": "pages/case_study.html#calculate-summary-statistics",
+    "title": "Case study",
+    "section": "Calculate summary statistics",
+    "text": "Calculate summary statistics\nFinally, we define a small utility function that calculates the mean, standard deviation, and a 95% confidence interval for a numeric series. The function handles small‑sample edge cases explicitly and uses the t‑distribution, which is appropriate when the sample size is modest.\n\n\ndef summary_stats(data):\n    \"\"\"\n    Calculate mean, standard deviation and 95% confidence interval (CI).\n\n    CI is calculated using the t-distribution, which is appropriate for\n    small samples and converges to the normal distribution as the sample\n    size increases.\n\n    Parameters\n    ----------\n    data : pandas.Series\n        Data to use in the calculation.\n\n    Returns\n    -------\n    dict[str, float]\n        A dictionary with keys `mean`, `std_dev`, `ci_lower` and `ci_upper`.\n        Each value is a float, or `numpy.nan` if it can't be computed.\n    \"\"\"\n    # Drop missing values\n    data = data.dropna()\n\n    # Find number of observations\n    count = len(data)\n\n    # If there are no observations, then set all to NaN\n    if count == 0:\n        mean, std_dev, ci_lower, ci_upper = np.nan, np.nan, np.nan, np.nan\n\n    # If there are 1 or 2 observations, can do mean but not other statistics\n    elif count &lt; 3:\n        mean = data.mean()\n        std_dev, ci_lower, ci_upper = np.nan, np.nan, np.nan\n\n    # With more than two observations, can calculate all...\n    else:\n        mean = data.mean()\n        std_dev = data.std()\n\n        # If there is no variation, then CI is equal to the mean\n        if np.var(data) == 0:\n            ci_lower, ci_upper = mean, mean\n        else:\n            # 95% CI based on the t-distribution\n            ci_lower, ci_upper = st.t.interval(\n                confidence=0.95,\n                df=count-1,\n                loc=mean,\n                scale=st.sem(data)\n            )\n\n    return {\n        \"mean\": mean,\n        \"std_dev\": std_dev,\n        \"ci_lower\": ci_lower,\n        \"ci_upper\": ci_upper\n    }\n\n\n\n\n\nWe apply summary_stats() to the waiting times.\n\n\nresults = summary_stats(processed_data[\"waittime\"])\n\n# Format dictionary for display\nformatted_results = json.dumps(results, indent=4)\nprint(formatted_results)\n\n{\n    \"mean\": 4.166666666666667,\n    \"std_dev\": 2.786873995477131,\n    \"ci_lower\": 1.2420217719136457,\n    \"ci_upper\": 7.091311561419689\n}",
+    "crumbs": [
+      "Case study"
+    ]
+  },
+  {
+    "objectID": "pages/break.html",
+    "href": "pages/break.html",
+    "title": "What was the point? Let’s break it and see!",
+    "section": "",
+    "text": "We have built a suite of unit, functional and back tests. These took time and effort to write. It is natural to ask: was it worth it?\nWe all know that tests “give confidence” and “check things”, but that can feel abstract and slightly theoretical. To make it concrete, this page deliberately breaks the code and shows how the tests help.",
+    "crumbs": [
+      "What was the point? Let's break it and see!"
+    ]
+  },
+  {
+    "objectID": "pages/break.html#the-innocent-change-minutes-to-hours",
+    "href": "pages/break.html#the-innocent-change-minutes-to-hours",
+    "title": "What was the point? Let’s break it and see!",
+    "section": "The “innocent change”: minutes to hours",
+    "text": "The “innocent change”: minutes to hours\nSuppose someone in the team decides that using hours instead of minutes will be more convenient when summarising waiting times. They find this line in the processing code:\ndf[\"waittime\"] = (\n    df[\"service_datetime\"] - df[\"arrival_datetime\"]\n) / pd.Timedelta(minutes=1)\nThey change it to use hours instead:\ndf[\"waittime\"] = (\n    df[\"service_datetime\"] - df[\"arrival_datetime\"]\n) / pd.Timedelta(hours=1)\nNothing else changes: same column name, same workflow, same analysis scripts.",
+    "crumbs": [
+      "What was the point? Let's break it and see!"
+    ]
+  },
+  {
+    "objectID": "pages/break.html#what-happens-next",
+    "href": "pages/break.html#what-happens-next",
+    "title": "What was the point? Let’s break it and see!",
+    "section": "What happens next?",
+    "text": "What happens next?\nLater, someone else on the team runs the analysis in exactly the same way as before. They are expecting average waits of around 30 minutes, because that is what the service normally sees.\nInstead, they now see an average of 0.5 in the output.\n\nThey might not immediately realise that 0.5 means 0.5 hours.\nThey might start looking for some other explanation: “Has demand changed?” “Is the data different?”” “Did we filter a different subset?””\nThey might even present the wrong numbers.\n\nThe code is still “working” in the sense that it runs successfully and produces numbers, but those numbers are now in a different unit from before. The change in meaning is silent and potentially easy to miss.",
+    "crumbs": [
+      "What was the point? Let's break it and see!"
+    ]
+  },
+  {
+    "objectID": "pages/break.html#how-the-tests-can-help",
+    "href": "pages/break.html#how-the-tests-can-help",
+    "title": "What was the point? Let’s break it and see!",
+    "section": "How the tests can help",
+    "text": "How the tests can help\nThis is where tests come in handy! After the change to hours, the functional and back tests will both fail.\nThese failures tell the team something important: the problem is in the code, not in the new data or some hidden change in demand.\nWithout these tests, this kind of “innocent” change could easily slip through and only be discovered much later.",
+    "crumbs": [
+      "What was the point? Let's break it and see!"
     ]
   },
   {
