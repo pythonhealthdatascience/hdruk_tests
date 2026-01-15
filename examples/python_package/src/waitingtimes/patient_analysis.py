@@ -69,7 +69,7 @@ def calculate_wait_times(df):
             df[f"{prefix}_DATE"].astype(str) +
             " " +
             df[f"{prefix}_TIME"].astype(str).str.zfill(4),
-            format="%Y-%m-%d %H%M",
+            format="%Y-%m-%d %H%M"
         )
 
     # Waiting time in minutes

@@ -14,7 +14,6 @@ use_condaenv("hdruk_tests", required = TRUE)
 
 A **unit** test checks one small, isolated unit of code - usually a single function or method. Your aim is to check that, for specific inputs, the function behaves exactly as promised.
 
-
 ## Example: `import_patient_data()`
 
 Let's use the `import_patient_data()` function from our case study. Its main behaviours are that it:
@@ -57,7 +56,7 @@ In our case, we can create a small CSV with correct columns in the right order a
 * The result is a pandas DataFrame.
 * The columns match exactly: `list(df.columns) == expected_list`
 
-::: {.callout-info title="Why test columns if the function already checks them?"}
+::: {.callout-note title="Why test columns if the function already checks them?"}
 
 Because we are testing the **promised** behaviour of the function, not just trusting its current implementation.
 
@@ -192,7 +191,7 @@ def test_import_path_types(tmp_path):
     pd.testing.assert_frame_equal(df_str, df_path)
 ```
 
-## When to stop testing
+## When to stop writing tests
 
 You cannot test everything. You've written enough tests when:
 
