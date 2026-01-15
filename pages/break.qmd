@@ -1,0 +1,49 @@
+---
+title: "What was the point? Let's break it and see!"
+---
+
+We have built a suite of unit, functional and back tests. These took time and effort to write. It is natural to ask: was it worth it?
+
+We all know that tests "give confidence" and "check things", but that can feel abstract and slightly theoretical. To make it concrete, this page deliberately breaks the code and shows how the tests help.
+
+## The "innocent change": minutes to hours
+
+Suppose someone in the team decides that using hours instead of minutes will be more convenient when summarising waiting times. They find this line in the processing code:
+
+```{.python}
+df["waittime"] = (
+    df["service_datetime"] - df["arrival_datetime"]
+) / pd.Timedelta(minutes=1)
+```
+
+They change it to use hours instead:
+
+```{.python}
+df["waittime"] = (
+    df["service_datetime"] - df["arrival_datetime"]
+) / pd.Timedelta(hours=1)
+```
+
+Nothing else changes: same column name, same workflow, same analysis scripts.
+
+## What happens next?
+
+Later, someone else on the team runs the analysis in exactly the same way as before. They are expecting average waits of around 30 minutes, because that is what the service normally sees.
+
+Instead, they now see an average of 0.5 in the output.
+
+* They might not immediately realise that 0.5 means 0.5 hours.
+
+* They might start looking for some other explanation: "Has demand changed?" "Is the data different?"" "Did we filter a different subset?""
+
+* They might even present the wrong numbers.
+
+The code is still "working" in the sense that it runs successfully and produces numbers, but those numbers are now in a different unit from before. The change in meaning is silent and potentially easy to miss.
+
+## How the tests can help
+
+This is where tests come in handy! After the change to hours, the functional and back tests will both fail.
+
+These failures tell the team something important: the problem is in the code, not in the new data or some hidden change in demand.
+
+Without these tests, this kind of "innocent" change could easily slip through and only be discovered much later.
