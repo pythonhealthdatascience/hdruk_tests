@@ -26,7 +26,7 @@ Let's say we want to verify that our `summary_stats()` function works correctly 
 
 ```{python}
 #| file: code/patient_analysis__summary_stats.py
-#| execute: false
+#| eval: false
 ```
 
 :::
@@ -35,14 +35,14 @@ We will need the following imports in our test script:
 
 ```{python}
 #| file: code/test_intro_parametrised__imports.py
-#| execute: false
+#| eval: false
 ```
 
 Instead of writing separate test functions for each case, we can use pytest's `@pytest.mark.parametrize` decorator:
 
 ```{python}
 #| file: code/test_intro_parametrised__test_summary_stats.py
-#| execute: false
+#| eval: false
 ```
 
 ## How it works

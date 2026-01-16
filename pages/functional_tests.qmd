@@ -29,7 +29,7 @@ Unlike unit tests, which check each function in isolation, functional tests run 
 We will need the follow imports in our test script:
 
 ```{python}
-#| execute: false
+#| eval: false
 #| file: code/test_functional__imports.py
 ```
 
