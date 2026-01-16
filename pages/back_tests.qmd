@@ -27,14 +27,14 @@ We will run back tests using the [dataset we introduced for our waiting times ca
 On the test page, we need to import:
 
 ```{python}
-#| execute: false
+#| eval: false
 #| file: code/test_back__imports.py
 ```
 
 ## Back test
 
 ```{python}
-#| execute: false
+#| eval: false
 #| file: code/test_back__test_reproduction.py
 ```
 

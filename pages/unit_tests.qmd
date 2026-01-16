@@ -19,7 +19,7 @@ A **unit** test checks one small, isolated unit of code - usually a single funct
 Let's use the `import_patient_data()` function from our case study. We will import it to our test script, alongside other required packages.
 
 ```{python}
-#| execute: false
+#| eval: false
 #| file: code/test_unit__imports.py
 ```
 
@@ -33,7 +33,7 @@ Its main behaviours are that it:
 ::: {.callout-note title="View `import_patient_data()`" collapse="true"}
 
 ```{python}
-#| execute: false
+#| eval: false
 #| file: code/patient_analysis__import_patient_data.py
 ```
 
@@ -73,7 +73,7 @@ If someone edits the code later and accidentally removes that validation, your t
 :::
 
 ```{python}
-#| execute: false
+#| eval: false
 #| file: code/test_unit__test_import_success.py
 ```
 
@@ -90,7 +90,7 @@ For `import_patient_data()`, a `ValueError` should be raised when we have:
 For each case, we can create a small DataFrame which triggers the problem and assert that a `ValueError` is raised.
 
 ```{python}
-#| execute: false
+#| eval: false
 #| file: code/test_unit__test_import_errors.py
 ```
 
@@ -103,7 +103,7 @@ For example, what if the CSV has the correct headers but no data? Should that su
 In this case, you might decide that an empty CSV with correct headers is fine and does not raise an error. You may still choose to write a test though, as that makes this decision explicit so other coders know what "correct" means at the edges.
 
 ```{python}
-#| execute: false
+#| eval: false
 #| file: code/test_unit__test_import_empty_csv.py
 ```
 
@@ -114,7 +114,7 @@ If the function promises to accept multiple equivalent input types, verify they 
 With `import_patient_data()`, we expect a `str` or `Path` object to both succeed and return the same DataFrame.
 
 ```{python}
-#| execute: false
+#| eval: false
 #| file: code/test_unit__test_import_path_types.py
 ```
 

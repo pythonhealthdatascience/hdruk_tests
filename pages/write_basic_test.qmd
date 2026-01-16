@@ -90,7 +90,7 @@ Here is a minimal example using the `summary_stats` function from the case study
 
 ```{python}
 #| file: code/patient_analysis__summary_stats.py
-#| execute: false
+#| eval: false
 ```
 
 :::
@@ -103,12 +103,12 @@ For a single value, the function should return that value as the mean and `NaN` 
 
 ```{python}
 #| file: code/test_intro_simple__imports.py
-#| execute: false
+#| eval: false
 ```
 
 ```{python}
 #| file: code/test_intro_simple__test_summary_stats_single_value.py
-#| execute: false
+#| eval: false
 ```
 
 ::::
