@@ -137,6 +137,17 @@ Finally, we run the tests! We call `pytest` on our case study (`examples/python_
 
 ### See GitHub actions, in action!
 
-The video below demonstrates this workflow running in GitHub Actions. For the demo, the workflow is triggered manually using `workflow_dispatch`, but it would also run automatically whenever you push changes to `main`.
+The video below demonstrates this workflow running in GitHub Actions. For the demo, the workflow is triggered manually using `workflow_dispatch`, but it would also run automatically whenever you push changes to `main`. In the video you'll see we:
 
-TODO.
+* Open the [GitHub repository](https://github.com/pythonhealthdatascience/hdruk_tests).
+* Go to the [Actions](https://github.com/pythonhealthdatascience/hdruk_tests/actions) tab.
+* Click on the [python_tests](https://github.com/pythonhealthdatascience/hdruk_tests/actions/workflows/python_tests.yaml) action.
+* View the [workflow YAML](https://github.com/pythonhealthdatascience/hdruk_tests/blob/main/.github/workflows/python_tests.yaml).
+* Trigger the action via `workflow_dispatch`.
+* [View the running test](https://github.com/pythonhealthdatascience/hdruk_tests/actions/runs/21067946032) - see they are installing the requirements, running tests, and pass.
+
+{{< video /videos/run_tests_python_githubactions.webm >}}
+
+The tests all pass in the end-
+
+![](/images/run_tests_python_githubactions.png)
